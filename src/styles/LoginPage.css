@@ -1,0 +1,124 @@
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Brush+Script&display=swap');
+.app-container {
+    
+    display: flex;
+    justify-content: center; /* Căn giữa theo chiều ngang */
+    align-items: center;    /* Căn giữa theo chiều dọc */
+    min-height: 100vh; /* Chiếm toàn bộ chiều cao màn hình trình duyệt */
+    background-color: #ffffff;
+    padding: 20px;
+}
+
+
+.login-main-wrapper {
+    display: flex;
+    background-color: #f1f8ff; /* Nền trắng cho khối chính */
+    border-radius: 40px; /* Góc bo tròn cho toàn bộ khối */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Thêm bóng mờ */
+    
+
+    width: 900px; /* Giới hạn chiều rộng nhỏ hơn (ví dụ: 900px) */
+    height: 600px; /* Giới hạn chiều cao */
+    overflow: hidden; /* Đảm bảo không tràn ra ngoài */
+}
+
+.left-content {
+    flex: 1; /* Chiếm 1 phần (khoảng 40%) */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    position: relative;
+    text-align: center;
+}
+
+
+.todo-icon {
+    width: 80px;  
+    height: 80px; 
+    border-radius: 50%;
+    position: relative; 
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.logo-text {
+    font-family: 'Nanum Brush Script', cursive;
+    font-size: 100px; 
+    line-height: 120px;
+    letter-spacing: 0.08em;
+    color: #000000;
+    margin-bottom: 60px;
+    position: relative;
+}
+
+/* Slogan */
+.slogan-container {
+    width: 100%;
+    position: relative; 
+    text-align: end;
+    padding: 0 20px;
+}
+
+.slogan-line {
+    font-family: 'Nanum Brush Script', cursive;
+    font-size: 30px; 
+    line-height: 35px;
+    letter-spacing: 0.08em;
+    color: #000000;
+    margin: 0;
+}
+
+
+
+.right-content {
+    width: 450px; 
+    height: 100%; 
+    background: rgba(52, 151, 249, 0.79);
+    border-radius: 0 40px 40px 0; 
+    padding: 30px 40px;
+    box-sizing: border-box;
+    
+    position: relative;
+}
+
+
+.login-content-wrapper {
+    padding-top: 10px;
+    color:#FFFFFF
+}
+
+
+.login-input {
+    width: 100%; 
+    max-width: 440px; 
+    height: 50px; 
+    padding: 14px 21px; 
+
+    background: #FFFFFF;
+    border: 1px solid #8AC0FF;
+    border-radius: 10px;
+    font-size: 20px;
+    font-family: 'Kanit', sans-serif;
+    font-weight: 275;
+    box-sizing: border-box;
+    display: block;
+}
+
+.input-group {
+    margin-bottom: 20px; 
+
+
+}
+
+.login-input:focus {
+    outline: none; 
+    border: 1px solid #FFFFFF; 
+    background-color: #FFFFFF; 
+    box-shadow: none; 
+}
+
