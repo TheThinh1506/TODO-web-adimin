@@ -14,7 +14,7 @@ const LoginPage = () => {
                 {/* ToDo Avatar Icon */}
                 <div className="todo-icon">
                     {/*  */}
-                    <img src="/images/task-icon-test.jpg" alt="Task Icon" className="icon-image" />
+                    <img src="/images/task-icon.jpg" alt="Avatar" className="avatar" />
                 </div>
                 
                 {/* Logo Text */}

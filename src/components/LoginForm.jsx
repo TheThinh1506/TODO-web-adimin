@@ -3,8 +3,9 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-// **ĐIỂM KẾT NỐI API QUAN TRỌNG:** Thay thế bằng URL Backend Server của bạn.
-const API_BASE_URL = 'http://localhost:8080/api'; 
+
+const API_BASE_ROOT = 'http://163.61.110.132:4000'; 
+const API_BASE_URL = `${API_BASE_ROOT}/auth`;
 
 const LoginForm = () => {
     
@@ -33,15 +34,15 @@ const LoginForm = () => {
         }
 
         try {
-            // GỌI API ĐĂNG NHẬP SẼ ĐƯỢC KÍCH HOẠT KHI NHẤN ENTER
-            const response = await axios.post(`${API_BASE_URL}/admin/login`, {
-                account: account,
+         
+            const response = await axios.post(`${API_BASE_URL}/sign-in`, {
+                email: account,
                 password: password,
             });
 
-            if (response.data && response.data.token) {
-                localStorage.setItem('authToken', response.data.token);
-                localStorage.setItem('userRole', response.data.role); 
+            if (response.data && response.data.accessToken) {
+                localStorage.setItem('accessToken', response.data.accessToken);
+                localStorage.setItem('refreshToken', response.data.refreshToken); 
                 alert('Đăng nhập thành công!');
                 navigate('/dashboard'); 
             } else {
