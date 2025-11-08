@@ -1,0 +1,363 @@
+/* src/styles/Dashboard.css */
+
+/* --- CẤU TRÚC LAYOUT CHÍNH --- */
+.dashboard-container {
+    display: flex;
+    width: 100vw; /* Kích thước chuẩn theo Figma */
+    height: 100vh;
+    margin: 0 auto; /* Căn giữa màn hình */
+    background: #F1F8FF;
+    font-family: 'Poppins', 'Inter', sans-serif;
+    position: relative;
+    overflow: hidden;
+}
+
+/* --- 1. SIDEBAR (THANH BÊN) --- */
+.sidebar {
+    width: 215px; /* Chiều rộng cố định */
+    height: 100vh; /* Chiều cao 100% */
+    background: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    padding: 25px 20px;
+    box-sizing: border-box; /* Quan trọng để padding không làm tăng chiều rộng */
+}
+
+.logo-section {
+    display: flex;
+    flex-direction: row; 
+    align-items: center; 
+    gap: 10px; 
+
+    position: relative;
+    margin-bottom: 40px;
+    padding-left: 10px; 
+    
+
+}
+
+.task-logo-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+.avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+  
+}
+.sidebar-logo-text {
+    font-family: 'Nanum Brush Script', cursive;
+    font-size: 36px;
+    margin: 0;
+    color: #000000;
+}
+
+/* Các link điều hướng */
+.nav-links {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Khoảng cách giữa các mục */
+}
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #7F8F98; /* Màu xám mặc định */
+    font-weight: 400;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+.nav-item:hover {
+    background: #f0f4f8;
+}
+.nav-item.active {
+    color: #3497F9; /* Màu xanh dương (Active) */
+    font-weight: 500;
+    /* Cần thêm icon/ảnh vào đây */
+}
+
+/* Footer (User & Sign out) */
+.sidebar-footer {
+    margin-top: auto;
+    margin-bottom: 20px; 
+}
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 40px;
+    position: relative;
+}
+.footer-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid #3497F9;
+}
+.user-info {
+    display: flex;
+    flex-direction: column;
+}
+.footer-username {
+    font-size: 12px;
+    font-weight: 500;
+    color: #374858;
+}
+.footer-userid {
+    font-size: 11px;
+    color: #808080;
+}
+.notification-icon {
+    margin-left: auto; /* Đẩy icon chuông sang phải */
+    cursor: pointer;
+    color: #9094AF;
+}
+
+.sign-out {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 15px;
+    cursor: pointer;
+    color: #7F8F98;
+    font-size: 14px;
+}
+
+/* --- 2. MAIN CONTENT (NỘI DUNG CHÍNH) --- */
+.main-content {
+    flex: 1; /* Chiếm hết phần còn lại */
+    padding: 25px 40px;
+    overflow-y: auto; /* Cho phép cuộn nếu nội dung dài */
+}
+.page-header h1 {
+    font-family: 'Playfair Display', serif; /* Font 'Playfair' theo Figma */
+    font-weight: 500;
+    font-size: 32px;
+    color: #374858;
+    margin: 0;
+    margin-bottom: 20px;
+}
+
+/* --- 3. LƯỚI DASHBOARD (GRID) --- */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 3fr 2fr; 
+    grid-template-rows: auto auto; 
+    gap: 25px; 
+
+}
+
+/* Khối chung */
+.grid-item {
+    background: #FFFFFF;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+/* Tiêu đề chung của Card */
+.card-title {
+    font-family: 'Kanit', sans-serif;
+    font-weight: 400;
+    font-size: 20px;
+    color: #000000;
+    margin: 0;
+    margin-bottom: 20px;
+}
+
+/* --- 4. CÁC KHỐI GRID CỤ THỂ --- */
+
+/* Biểu đồ Task Progress */
+.progress-chart-box {
+    grid-column: 1 / 2; /* Chiếm cột 1 */
+    grid-row: 1 / 2; /* Chiếm hàng 1 */
+    height: 330px; /* Chiều cao cố định theo Figma */
+}
+.chart-container {
+    height: 270px; /* Chiều cao cho canvas biểu đồ */
+    position: relative;
+}
+
+/* Month's Project */
+.months-project-box {
+    grid-column: 2 / 3; /* Chiếm cột 2 */
+    grid-row: 1 / 2; /* Chiếm hàng 1 */
+    height: 330px;
+    /* Cần code Bảng (Table) ở đây */
+}
+.project-title {
+    text-align: center;
+    font-weight: 600;
+    font-size: 24px;
+}
+
+/* Task Due Today */
+.due-tasks-box {
+    grid-column: 1 / 2; /* Chiếm cột 1 */
+    grid-row: 2 / 3; /* Chiếm hàng 2 */
+    /* Cần code Bảng (Table) ở đây */
+}
+
+/* Today Summary */
+.summary-box {
+    grid-column: 2 / 3;     
+    grid-row: 2 / 3; 
+   
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.summary-header {
+    font-family: 'Kanit', sans-serif;
+    font-weight: 600;
+    font-size: 32px;
+    text-align: center;
+    margin: 0;
+    margin-bottom: 20px;
+}
+.summary-details {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 0 15px;
+}
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+}
+.total-row {
+    font-weight: 600;
+}
+.complete-row span {
+    color: #1E8E3E; /* Màu xanh lá (Complete) */
+}
+.late-row span {
+    color: #B3261E; /* Màu đỏ (Late) */
+}
+.progress-row span {
+    color: #F29900; /* Màu cam (In Progress) */
+}
+
+.table-container {
+    width: 100%;
+    overflow-x: auto; 
+}
+
+.table-container table {
+    width: 100%;
+    border-collapse: collapse; 
+    font-size: 14px;
+}
+
+.table-container th, 
+.table-container td {
+    padding: 12px 10px; 
+    text-align: left;
+    border-bottom: 1px solid #F0F0F0; 
+    white-space: nowrap; 
+}
+
+.table-container th {
+    font-weight: 600;
+    color: #333;
+    font-family: 'Kanit', sans-serif;
+}
+
+.table-container td {
+    color: #555;
+}
+
+
+.due-tasks-box {
+    padding: 0; 
+    overflow: hidden; 
+}
+.due-tasks-box .card-title {
+    padding-left: 20px; 
+    padding-top: 20px;
+}
+
+
+.status-pill {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.status-complete {
+    color: #1E8E3E;
+    background-color: rgba(30, 142, 62, 0.1);
+}
+
+.status-progress {
+    color: #F29900;
+    background-color: rgba(242, 153, 0, 0.1);
+}
+
+.status-late {
+    color: #B3261E;
+    background-color: rgba(179, 38, 30, 0.1);
+}
+.clickable-row {
+    cursor: pointer; 
+    transition: background-color 0.2s;
+}
+.clickable-row:hover {
+    background-color: #f9f9f9; 
+}
+.project-details-grid {
+    display: grid;
+    grid-template-columns: 3fr 1fr; 
+    
+  
+    grid-template-rows: auto auto; 
+    
+    
+    gap: 25px;
+    align-items: start; /* Ngăn các item ở hàng 2 bị kéo dãn bằng nhau */
+}
+
+/* Frame 1: Timeline*/
+.timeline-box {
+    grid-column: 1 / 3; 
+    grid-row: 1 / 2;
+    height: 300px; 
+}
+
+/* Frame 2: History */
+.history-box {
+    grid-column: 1 / 2; 
+    grid-row: 2 / 3; 
+    
+    padding: 0; 
+    overflow: hidden; 
+}
+
+.history-box .card-title {
+    padding-left: 20px; 
+    padding-top: 20px;
+}
+
+/* Frame 3: Today */
+.summary-box {
+    grid-column: 2 / 3;
+    grid-row: 2 / 3;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center; 
+}

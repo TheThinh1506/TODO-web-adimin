@@ -2,8 +2,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
+// 1. IMPORT TRANG DASHBOARD THẬT
+import DashBoardPage from './dashboard/pages/DashBoardpage';
 
-const DashboardPage = () => <h1>Welcome to Admin Dashboard!</h1>; 
+
 
 
 const isAuthenticated = () => {
@@ -33,9 +35,9 @@ function App() {
         <Route 
             path="/dashboard" 
             element={
-                <ProtectedRoute>
-                    <DashboardPage />
-                </ProtectedRoute>
+               /* <ProtectedRoute>*/
+                    <DashBoardPage />
+              /*  </ProtectedRoute>*/
             } 
         />
       </Routes>
