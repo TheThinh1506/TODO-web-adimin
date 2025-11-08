@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
@@ -14,11 +14,25 @@ const LoginForm = () => {
     const [error, setError] = useState(''); 
     const [isLoading, setIsLoading] = useState(false); 
     const navigate = useNavigate();
+   /*
     const recentlyUsedUser = {
     name: 'Smith',
     timeUsed: '5 ngày trước',
     avatarUrl: '/images/avatar.jpg' 
-    };
+    };*/
+
+    useEffect(() => {
+        if (error) { // Nếu 'error' có nội dung
+            const timerId = setTimeout(() => {
+                setError(''); // Đặt lại 'error' về rỗng
+            }, 3000); // 3000ms = 3 giây
+
+            // Hàm dọn dẹp: Hủy bộ đếm nếu component unmount hoặc 'error' thay đổi
+            return () => {
+                clearTimeout(timerId);
+            };
+        }
+    }, [error]); // Hook này sẽ chạy lại mỗi khi 'error' thay đổi
 
     // HÀM XỬ LÝ ĐĂNG NHẬP
     const handleSubmit = async (e) => {
