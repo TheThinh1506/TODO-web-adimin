@@ -1,8 +1,7 @@
-// src/dashboard/component/MonthProjectTable.jsx
+
 
 import React from 'react';
 
-// Component này nhận 'projects' (dữ liệu giả định) từ DashboardPage
 const MonthProjectTable = ({ projects, onProjectClick }) => {
     
     // **ĐIỂM KẾT NỐI API QUAN TRỌNG:**

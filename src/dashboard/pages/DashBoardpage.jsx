@@ -1,47 +1,60 @@
 
 
-import React, {useState } from 'react';
+import React, {useState, useEffect } from 'react';
 import Sidebar from '../component/SideBar';
 import TaskProgressChart from '../component/TaskProgressChart';
 import TodaysSummary from '../component/TodaySummary';
 import MonthProjectTable from '../component/MonthProjectTable';
 import TaskDueTodayTable from '../component/TaskDueTodayTable';
 import ProjectTimeline from '../component/ProjectTimeline';
-
+import axios from 'axios';
 import '../style/DashBoard.css';
 
-// 3. COMPONENT CHÍNH
+const API_BASE_ROOT = 'http://163.61.110.132:4000';
+const API_BASE_URL = `${API_BASE_ROOT}/api`;
 const DashboardPage = () => {
-    // 3. TẠO STATE ĐỂ QUẢN LÝ CHẾ ĐỘ XEM
-    // Nếu selectedProject là null -> Xem Dashboard chính
-    // Nếu selectedProject có giá trị -> Xem Chi tiết Project
+
     const [selectedProject, setSelectedProject] = useState(null);
-
-    // **ĐIỂM KẾT NỐI API QUAN TRỌNG:**
-    // (Trong tương lai, dữ liệu này sẽ được lấy từ API bằng useEffect và useState)
-
-    const handleProjectClick = (project) => {
-        // **ĐIỂM KẾT NỐI API QUAN TRỌNG:**
-        // Khi click, bạn cần gọi API để lấy dữ liệu Timeline và History cho project.id
-        // Ví dụ: GET /api/projects/{project.id}/details
-        
-        // Tạm thời, chúng ta chỉ set project đã chọn
-        setSelectedProject(project);
-    };
-    // Dữ liệu giả định (Mock Data) cho Month's Project (API Call 1)
-    const monthsProjects = [
+    const [monthsProjects, setMonthsProjects] = useState([]); 
+    const [dueTasks, setDueTasks] = useState([]);
+    const MonthsProjects = [
         { name: 'TO-DO APP', assignedTo: 'Group 4', status: 'In Progress' },
         { name: 'Gặp khách hàng', assignedTo: 'T.Tài', status: 'Complete' },
         { name: 'Báo cáo quý 4', assignedTo: 'T.Thịnh', status: 'Complete' },
     ];
-    
-    // Dữ liệu giả định cho Task Due Today (API Call 2)
-    const dueTasks = [
+            const DueTasks = [
         { time: '9:30 AM', date: '28/10/2025', staff: 'Thịnh', task: 'To-Do App', status: 'Late' },
         { time: '9:30 AM', date: '28/10/2025', staff: 'Tài', task: 'To-Do App', status: 'Complete' },
         { time: '10:30 AM', date: '28/10/2025', staff: 'Thái An', task: 'Báo cáo quý 4', status: 'Complete' },
         { time: '11:00 AM', date: '28/10/2025', staff: 'Tấn An', task: 'To-Do App', status: 'In Progress' },
     ];
+    useEffect(() => {
+        const loadDashboardData = async () => {
+             const accessToken = localStorage.getItem('accessToken');
+            
+            const projectsResponse = await axios.get(`${API_BASE_URL}/projects/owner`, {
+                 headers: {  'Authorization': `Bearer ${accessToken}` } 
+                });
+            setMonthsProjects(/*projectsResponse.data.projects*/MonthsProjects);
+            setDueTasks(DueTasks)
+        };
+        loadDashboardData();
+    }, []);
+
+    const handleProjectClick =  async(project) => {
+        
+            const accessToken = localStorage.getItem('accessToken');
+             const tasksResponse = await axios.get(`${API_BASE_URL}/projects/${project.id}/tasks`, {
+                 headers: { 'Authorization': `Bearer ${accessToken}` }
+             });
+            
+            // (Mock response)
+            const TasksResponse = { data: { tasks: [ /* ... */  ] } };
+
+            setSelectedProject({ ...project, milestones: TasksResponse.data.tasks });
+    };
+   
+    
 
     const handleBackToHome = () => {
         setSelectedProject(null);
@@ -67,10 +80,10 @@ const DashboardPage = () => {
                         <div className="grid-item months-project-box">
                             <h3 className="card-title project-title">Month's Project</h3>
                             {/* Truyền hàm handleProjectClick xuống component con */}
-                            <MonthProjectTable projects={monthsProjects} onProjectClick={handleProjectClick} /> 
+                            <MonthProjectTable projects={MonthsProjects} onProjectClick={handleProjectClick} /> 
                         </div>
                         <div className="grid-item due-tasks-box">
-                            <TaskDueTodayTable tasks={dueTasks} /> 
+                            <TaskDueTodayTable tasks={DueTasks} /> 
                         </div>
                         <div className="grid-item summary-box">
                             <TodaysSummary tasks={dueTasks} /> 

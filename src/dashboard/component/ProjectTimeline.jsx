@@ -4,7 +4,8 @@ import React, { useState, useEffect } from 'react';
 import '../style/Timeline.css'; 
 import TaskDetailsPopup from './TaskDetailsPopup';
 
-// DỮ LIỆU GIẢ ĐỊNH BAN ĐẦU (Theo Mock Data bạn cung cấp)
+const API_BASE_ROOT = 'http://163.61.110.132:4000';
+const API_BASE_URL = `${API_BASE_ROOT}/api`;
 const INITIAL_MILESTONES = [
     { 
         id: 1, name: 'Thiết kế UI', date: '2/10', status: 'Done', position: 10,
@@ -91,13 +92,15 @@ const ProjectTimeline = ({ project }) => {
 
     }, [milestones]); 
 
-    // Hàm xử lý khi click checkbox (truyền xuống Popup)
-    const handleSubtaskToggle = (milestoneId, subtaskId) => {
+    // MỤC ĐÍCH: Cập nhật trạng thái "Done" / "Working" cho subtask.
+    const handleSubtaskToggle = (milestoneId, subtaskId, newDoneStatus) => {
         
-        // **ĐIỂM KẾT NỐI API QUAN TRỌNG:**
-        // Sau khi cập nhật state, bạn cần gọi API (PUT/POST) để lưu trạng thái
-        // subtask.done mới này vào Database.
-
+        
+        const newStatus = newDoneStatus ? "Done" : "Working";
+         axios.patch(`${API_BASE_URL}/tasks/${subtaskId}/status`, 
+             { newStatus: newStatus },
+             { headers: { 'Authorization': `Bearer ${accessToken}` } }
+         );
         setMilestones(prevMilestones => {
             const newMilestones = prevMilestones.map(m => {
                 // Tìm đúng mốc (milestone)
@@ -106,7 +109,7 @@ const ProjectTimeline = ({ project }) => {
                     // Cập nhật subtask bên trong
                     const newSubtasks = m.details.subtasks.map(st => {
                         if (st.id === subtaskId) {
-                            return { ...st, done: !st.done }; // Đảo ngược trạng thái 'done'
+                            return { ...st, done: !st.done }; 
                         }
                         return st;
                     });
