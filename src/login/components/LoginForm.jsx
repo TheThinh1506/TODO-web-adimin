@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
@@ -14,6 +14,20 @@ const LoginForm = () => {
     const [error, setError] = useState(''); 
     const [isLoading, setIsLoading] = useState(false); 
     const navigate = useNavigate();
+   
+
+    useEffect(() => {
+        if (error) { 
+            const timerId = setTimeout(() => {
+                setError(''); 
+            }, 3000); 
+
+           
+            return () => {
+                clearTimeout(timerId);
+            };
+        }
+    }, [error]); 
 
     
     // HÀM XỬ LÝ ĐĂNG NHẬP
