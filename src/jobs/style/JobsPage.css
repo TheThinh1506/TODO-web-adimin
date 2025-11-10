@@ -1,0 +1,134 @@
+
+
+/* Thanh công cụ (Toolbar) */
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 15px; 
+}
+
+/* Thanh tìm kiếm */
+.search-bar {
+    position: relative;
+    width: 300px;
+    flex-shrink: 1; 
+}
+.search-bar input {
+    width: 100%;
+    height: 40px; 
+    padding: 5px 15px 5px 15px; 
+    border: none;
+    border-radius: 20px;
+    background: #FFFFFF;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.05); 
+    font-family: 'Poppins', sans-serif;
+}
+.search-bar input:focus {
+    outline: 1px solid #3497F9;
+}
+
+/* Bộ lọc (Dropdown) */
+.filter-bar {
+    position: relative;
+    width: 176px;
+}
+.filter-bar select {
+    width: 100%;
+    height: 40px;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 12px;
+    background: #FFFFFF;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.05);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    color: #333;
+    appearance: none; 
+    cursor: pointer;
+}
+
+/* Nút Thêm Công Việc */
+.add-job-button {
+    display: flex;
+    align-items: center;
+    margin-right: 50px;
+    justify-content: center;
+    gap: 8px;
+    width: 180px;
+    height: 100px;
+    background: #FFFFFF;
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.05);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    color: #000000;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.add-job-button:hover {
+    background-color: #1976D2; 
+    color: #FFFFFF; 
+}
+
+/* Container Bảng Dữ liệu */
+.job-table-container {
+    height: auto; 
+    width: 100%;
+    padding: 0; 
+    overflow: hidden;
+    border-radius: 20px; 
+}
+
+.job-table-container table {
+    width: 100%;
+    border-collapse: collapse; 
+    font-size: 13px;
+}
+
+/* Tiêu đề bảng (Header) */
+.job-table-container th {
+    padding: 18px 15px; 
+    text-align: left;
+    border-bottom: 1px solid #F0F0F0; 
+    white-space: nowrap;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    color: #242222;
+    font-size: 13px;
+    background-color: #fcfcfc; 
+}
+
+/* Hàng dữ liệu (Row) */
+.job-table-container td {
+    padding: 16px 15px;
+    text-align: left;
+    border-bottom: 1px solid #F0F0F0; 
+    white-space: nowrap;
+    font-family: 'Poppins', sans-serif;
+    color: #595959;
+}
+/* Xóa đường viền của hàng cuối cùng */
+.job-table-container tr:last-child td {
+    border-bottom: none;
+}
+
+/* Link Feedback (Màu đỏ) */
+.feedback-link {
+    color: #B3261E;
+    font-weight: 300;
+    text-decoration: none;
+    cursor: pointer;
+}
+.feedback-link:hover {
+    text-decoration: underline;
+}
+
+
+.status-pill { padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; display: inline-block; }
+.status-complete { color: #1E8E3E; background-color: rgba(30, 142, 62, 0.1); }
+.status-progress { color: #F29900; background-color: rgba(242, 153, 0, 0.1); }
+.status-late { color: #B3261E; background-color: rgba(179, 38, 30, 0.1); }

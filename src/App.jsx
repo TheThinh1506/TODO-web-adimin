@@ -2,11 +2,11 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
-// 1. IMPORT TRANG DASHBOARD THẬT
+
 import DashBoardPage from './dashboard/pages/DashBoardpage';
 
-
-
+import JobsPage from './jobs/pages/Jobspage';
+import StaffPage from './staff/pages/StaffPage';
 
 const isAuthenticated = () => {
     return localStorage.getItem('authToken') ? true : false;
@@ -39,6 +39,18 @@ function App() {
                     <DashBoardPage />
               /*  </ProtectedRoute>*/
             } 
+        />
+        <Route 
+            path="/jobs" // <-- Đổi từ /schedule
+            element={
+           /* <ProtectedRoute> */
+              <JobsPage />
+           /* </ProtectedRoute> */
+            } 
+        />
+        <Route 
+            path="/staff" 
+            element={/*<ProtectedRoute>*/<StaffPage />/*</ProtectedRoute>*/} 
         />
       </Routes>
     </Router>

@@ -1,0 +1,341 @@
+
+
+/* Khung trắng chính bao bọc trang */
+.staff-page-wrapper {
+    width: 1100px;
+    height: calc(100vh - 120px);
+    margin: 0 auto;
+    background: #FFFFFF;
+    border-radius: 20px 0px 0px 20px; 
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header của trang Staff (Tabs và Nút Thêm) */
+.staff-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #F0F0F0;
+    padding-bottom: 10px;
+}
+
+.tabs {
+    display: flex;
+    gap: 40px;
+}
+
+.tab-btn {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
+    font-size: 20px;
+    color: #000000;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px 0;
+    border-bottom: 3px solid transparent; 
+}
+
+.tab-btn.active {
+    font-weight: 600;
+    color: #1976D2; 
+    border-bottom-color: #1976D2; 
+}
+
+/* Nút Thêm Mới */
+.add-new-button {
+    background: #429FFB;
+    border-radius: 15px;
+    border: none;
+    color: #FFFFFF;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    font-size: 16px; 
+    padding: 12px 20px;
+    cursor: pointer;
+}
+
+/* Bố cục 2 cột (Danh sách và Chi tiết) */
+.staff-content-grid {
+    display: grid;
+    grid-template-columns: 350px 650px; 
+    gap: 20px;
+    padding-top: 20px;
+    height: 100%;
+    overflow: hidden;
+    justify-content: center;
+}
+
+/* CỘT TRÁI */
+.staff-list-column {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    overflow-y: auto; 
+    padding-right: 10px; 
+}
+
+.list-search-bar {
+    width: 100%;
+}
+.list-search-bar input {
+    width: 100%;
+    height: 48px;
+    background: #DDEEFF;
+    border-radius: 90px;
+    border: none;
+    padding: 10px 20px 10px 45px; 
+    font-family: 'Montserrat', sans-serif;
+    font-size: 18px; 
+    color: #515151;
+    box-sizing: border-box;
+}
+
+/* Danh sách nhân viên */
+.staff-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.staff-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    border-bottom: 1px solid #F0F0F0;
+    transition: background-color 0.2s;
+}
+.staff-item:hover {
+    background-color: #f9f9f9;
+}
+.staff-item.active {
+    background-color: #DDEEFF;
+}
+
+.staff-item-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.staff-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #EADDFF; 
+}
+.staff-name {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    font-size: 18px; 
+    color: #000000;
+}
+
+.staff-item-actions {
+    display: flex;
+    gap: 10px;
+}
+.action-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    display: flex; 
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    width: 28px; 
+    height: 28px;
+    transition: background-color 0.2s;
+}
+.action-icon:hover {
+    background-color: #f00c0c; 
+}
+.delete-icon { 
+    color: #C00F0C; 
+}
+.action-icon img {
+    width: 14px; 
+    height: 14px;
+}
+
+/* CỘT PHẢI */
+.staff-details-column {
+    background: #FFFFFF;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1); 
+    border-radius: 20px; 
+    padding: 40px;
+    overflow-y: auto; 
+}
+
+.details-wrapper {
+   width: 100%;
+}
+
+
+.details-title {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 32px;
+    color: #000000;
+    margin-top: 0;
+    margin-bottom: 20px;
+    text-align: left;
+}
+.details-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+.details-avatar {
+    width: 105px;
+    height: 105px;
+    border-radius: 50%;
+    background: #EADDFF; 
+}
+.details-header-text {
+    display: flex;
+    flex-direction: column;
+}
+.details-name {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    font-size: 24px;
+    color: #000000;
+}
+.details-email {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    font-size: 20px;
+    color: #727272;
+}
+.details-divider {
+    border: none;
+    border-top: 1px solid #CFCFCF;
+    margin: 25px 0;
+}
+
+/* Lưới thông tin */
+.details-info-grid {
+    display: grid;
+    grid-template-columns: auto 1fr; 
+    gap: 20px 60px; 
+}
+.info-label {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    font-size: 18px; 
+    color: #727272;
+    text-align: left;
+}
+.info-value {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    font-size: 18px;
+    color: #000000;
+}
+
+.placeholder-tab {
+    padding: 20px;
+    font-style: italic;
+    color: #888;
+}
+.group-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.group-item {
+    border-bottom: 1px solid #F0F0F0;
+}
+
+.group-item-header {
+    display: flex;
+    align-items: center;
+    padding: 10px 5px;
+    cursor: pointer;
+    background-color: #fcfcfc;
+    border-radius: 5px;
+}
+
+.group-name {
+    flex-grow: 1; 
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600; 
+    font-size: 16px;
+    color: #333;
+}
+
+.group-toggle-arrow {
+    font-size: 12px;
+    color: #888;
+    transition: transform 0.2s ease;
+}
+.group-toggle-arrow.expanded {
+    transform: rotate(180deg); 
+}
+
+/* Menu 3 chấm (Kebab menu) */
+.group-actions {
+    position: relative; 
+    margin-right: 10px;
+}
+.kebab-menu-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.kebab-dropdown {
+    position: absolute;
+    top: 100%; 
+    left: 0;
+    background: #FFFFFF;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    z-index: 10;
+    padding: 5px;
+    width: 150px; /* Độ rộng của dropdown */
+}
+.kebab-dropdown button {
+    display: block;
+    width: 100%;
+    padding: 8px 10px;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    font-size: 14px;
+}
+.kebab-dropdown button:hover {
+    background-color: #f0f0f0;
+}
+
+.kebab-dropdown button:last-child {
+    color: #B3261E;
+}
+
+
+/* Danh sách thành viên bên trong nhóm */
+.member-list {
+    padding-left: 30px; 
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+.member-list .staff-item {
+    border-bottom: none; 
+    padding: 5px;
+}
