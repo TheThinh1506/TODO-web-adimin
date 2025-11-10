@@ -1,21 +1,57 @@
 
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom'; 
-
+import axios from 'axios';
+ const API_BASE_ROOT = 'http://163.61.110.132:4000';
+ const API_BASE_URL = `${API_BASE_ROOT}/api/auth`;
 const Sidebar = () => {
     const navigate = useNavigate();
     const location = useLocation(); 
-    
-    // (Hàm handleSignOut giữ nguyên)
-     const handleSignOut = () => {
+    const [usr, setUser] = useState({ name: 'Loading...', id: '...' });
 
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        navigate('/'); 
+     useEffect(() => {
+        const fetchUserInfo = async () => {
+            try {
+                
+                 const accessToken = localStorage.getItem('accessToken');
+                 const user_response = await axios.get(`${API_BASE_URL}/auth/user-info`, {
+                     headers: { 'Authorization': `Bearer ${accessToken}` }
+                 });
+                
+                // (Dùng Mock Data thay thế)
+                const response = { data: { username: "Smith", email: "2352xxxx" } }; 
+                
+                setUser({ name: user_response.data.username, id: user_response.data.email });
+
+            } catch (error) {
+                console.error("Lỗi khi lấy thông tin user:", error);
+            }
+        };
+        fetchUserInfo();
+    }, []); // Chạy 1 lần
+
+    
+    const handleSignOut = async () => {
+        try {
+           
+            const accessToken = localStorage.getItem('accessToken');
+             const refreshToken = localStorage.getItem('refreshToken');
+             await axios.post(`${API_BASE_URL}/auth/sign-out`, 
+                 { refreshToken: refreshToken }, 
+                 { headers: { 'Authorization': `Bearer ${accessToken}` } } 
+             );
+
+        } catch (error) {
+            console.error("Lỗi khi đăng xuất:", error);
+        } finally {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            navigate('/'); 
+        }
     };
 
-    // 3. Hàm helper để kiểm tra active (dựa trên đường dẫn URL)
+ 
     const isActive = (path) => {
         return location.pathname.startsWith(path); 
     };

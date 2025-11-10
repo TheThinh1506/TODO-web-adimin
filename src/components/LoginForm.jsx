@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 
 const API_BASE_ROOT = 'http://163.61.110.132:4000'; 
-const API_BASE_URL = `${API_BASE_ROOT}/auth`;
+const API_BASE_URL = `${API_BASE_ROOT}/api/auth`;
 
 const LoginForm = () => {
     
@@ -14,16 +14,11 @@ const LoginForm = () => {
     const [error, setError] = useState(''); 
     const [isLoading, setIsLoading] = useState(false); 
     const navigate = useNavigate();
-    const recentlyUsedUser = {
-    name: 'Smith',
-    timeUsed: '5 ngày trước',
-    avatarUrl: '/images/avatar.jpg' 
-    };
 
+    
     // HÀM XỬ LÝ ĐĂNG NHẬP
     const handleSubmit = async (e) => {
-        e.preventDefault(); // <-- QUAN TRỌNG: Ngăn chặn tải lại trang
-        // ... (Tất cả logic đăng nhập và gọi API giữ nguyên) ...
+        e.preventDefault(); 
         setError('');
         setIsLoading(true);
 
@@ -90,8 +85,7 @@ const LoginForm = () => {
                 {/* Hiển thị lỗi */}
                 {error && <p className="error-message">{error}</p>}
 
-                   
-                {/* GIỮ NÚT SUBMIT ẨN: Đây là cách tốt nhất về mặt kỹ thuật */}
+            
                 <button type="submit" className="hidden-submit-button" disabled={isLoading} style={{display: 'none'}}>
                     Đăng nhập bằng Enter
                 </button>
