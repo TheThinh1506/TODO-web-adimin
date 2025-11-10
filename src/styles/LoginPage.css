@@ -35,20 +35,29 @@
 
 
 .todo-icon {
-    width: 80px;  
-    height: 80px; 
+    width: 120px;  
+    height: 120px; 
     border-radius: 50%;
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
     position: relative; 
-    margin-bottom: 10px;
+    margin-bottom: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
+.avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+   /* border: 3px solid #ffffff; */
+}
 
 .logo-text {
     font-family: 'Nanum Brush Script', cursive;
-    font-size: 100px; 
+    font-size: 130px; 
     line-height: 120px;
     letter-spacing: 0.08em;
     color: #000000;
@@ -120,5 +129,18 @@
     border: 1px solid #FFFFFF; 
     background-color: #FFFFFF; 
     box-shadow: none; 
+}
+.login-content-wrapper .error-message {
+    color: #da4444 !important; /* Đặt màu chữ thành đỏ (Sử dụng !important để ghi đè) */    
+    /* Thiết lập khoảng cách và bố cục */
+    padding: 8px 12px;
+    margin-top: 15px;
+    border-radius: 5px;
+    
+    font-size: 14px; 
+    font-weight: bold; 
+    text-align: start;
+    
+
 }
 
