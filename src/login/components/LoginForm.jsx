@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 
 const API_BASE_ROOT = 'http://163.61.110.132:4000'; 
-const API_BASE_URL = `${API_BASE_ROOT}/auth`;
+const API_BASE_URL = `${API_BASE_ROOT}/api/auth`;
 
 const LoginForm = () => {
     
@@ -14,30 +14,25 @@ const LoginForm = () => {
     const [error, setError] = useState(''); 
     const [isLoading, setIsLoading] = useState(false); 
     const navigate = useNavigate();
-   /*
-    const recentlyUsedUser = {
-    name: 'Smith',
-    timeUsed: '5 ngày trước',
-    avatarUrl: '/images/avatar.jpg' 
-    };*/
+   
 
     useEffect(() => {
-        if (error) { // Nếu 'error' có nội dung
+        if (error) { 
             const timerId = setTimeout(() => {
-                setError(''); // Đặt lại 'error' về rỗng
-            }, 3000); // 3000ms = 3 giây
+                setError(''); 
+            }, 3000); 
 
-            // Hàm dọn dẹp: Hủy bộ đếm nếu component unmount hoặc 'error' thay đổi
+           
             return () => {
                 clearTimeout(timerId);
             };
         }
-    }, [error]); // Hook này sẽ chạy lại mỗi khi 'error' thay đổi
+    }, [error]); 
 
+    
     // HÀM XỬ LÝ ĐĂNG NHẬP
     const handleSubmit = async (e) => {
-        e.preventDefault(); // <-- QUAN TRỌNG: Ngăn chặn tải lại trang
-        // ... (Tất cả logic đăng nhập và gọi API giữ nguyên) ...
+        e.preventDefault(); 
         setError('');
         setIsLoading(true);
 
@@ -104,8 +99,7 @@ const LoginForm = () => {
                 {/* Hiển thị lỗi */}
                 {error && <p className="error-message">{error}</p>}
 
-                   
-                {/* GIỮ NÚT SUBMIT ẨN: Đây là cách tốt nhất về mặt kỹ thuật */}
+            
                 <button type="submit" className="hidden-submit-button" disabled={isLoading} style={{display: 'none'}}>
                     Đăng nhập bằng Enter
                 </button>

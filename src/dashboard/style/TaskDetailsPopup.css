@@ -1,0 +1,115 @@
+/* src/dashboard/style/TaskDetailsPopup.css */
+
+.task-details-popup {
+    position: absolute;
+    width: 280px; /* Chiều rộng cố định cho popup */
+    background: #FFFFFF;
+    border: 1px solid #E0E0E0;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    z-index: 100;
+    
+    
+    top: 30px; 
+    left: 50%;
+    transform: translateX(-50%); 
+    
+    /* Font chung */
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    color: #333;
+    text-align: left;
+    white-space: normal; 
+}
+
+.task-details-popup.align-right {
+    left: auto;
+    right: 0; 
+    transform: translateX(0); /* Không di chuyển ngang */
+}
+
+/* Header (Tên, Status) */
+.popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.assignee-name {
+    font-weight: 600;
+    font-size: 16px;
+    color: #000;
+}
+
+.status-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+}
+.status-badge .status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+.status-badge.status-completed .status-dot {
+    background-color: #1E8E3E; /* Màu xanh lá (Completed) */
+}
+.status-badge.status-completed {
+    color: #1E8E3E;
+}
+.status-badge.status-pending .status-dot {
+    background-color: #F29900; /* Màu cam (Pending) */
+}
+.status-badge.status-pending {
+    color: #c6c0bf;
+}
+
+
+/* Checklist (Công việc con) */
+.subtask-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 12px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.subtask-list li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.subtask-list li.done span {
+    text-decoration: line-through; /* Gạch ngang text đã hoàn thành */
+    color: #888;
+}
+
+
+.subtask-list input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #1E8E3E;
+    pointer-events: auto; 
+    cursor: pointer; 
+}
+
+
+.divider {
+    border: none;
+    border-top: 1px solid #EEEEEE;
+    margin: 12px 0;
+}
+
+/* Footer (Progress, Dates) */
+.popup-footer p {
+    margin: 4px 0;
+    font-size: 12px;
+    color: #555;
+}
+.popup-footer p strong {
+    color: #333;
+}
