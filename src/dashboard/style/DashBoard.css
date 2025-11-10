@@ -1,11 +1,11 @@
-/* src/styles/Dashboard.css */
+
 
 /* --- CẤU TRÚC LAYOUT CHÍNH --- */
 .dashboard-container {
     display: flex;
-    width: 100vw; /* Kích thước chuẩn theo Figma */
+    width: 100vw; 
     height: 100vh;
-    margin: 0 auto; /* Căn giữa màn hình */
+    margin: 0 auto; 
     background: #F1F8FF;
     font-family: 'Poppins', 'Inter', sans-serif;
     position: relative;
@@ -14,13 +14,13 @@
 
 /* --- 1. SIDEBAR (THANH BÊN) --- */
 .sidebar {
-    width: 215px; /* Chiều rộng cố định */
-    height: 100vh; /* Chiều cao 100% */
+    width: 215px; 
+    height: 100vh; 
     background: #FFFFFF;
     display: flex;
     flex-direction: column;
     padding: 25px 20px;
-    box-sizing: border-box; /* Quan trọng để padding không làm tăng chiều rộng */
+    box-sizing: border-box; 
 }
 
 .logo-section {
@@ -65,7 +65,7 @@
 .nav-links {
     display: flex;
     flex-direction: column;
-    gap: 15px; /* Khoảng cách giữa các mục */
+    gap: 15px; 
 }
 .nav-item {
     display: flex;
@@ -74,7 +74,7 @@
     padding: 10px;
     border-radius: 8px;
     cursor: pointer;
-    color: #7F8F98; /* Màu xám mặc định */
+    color: #7F8F98; 
     font-weight: 400;
     font-size: 14px;
     transition: all 0.2s ease;
@@ -83,9 +83,9 @@
     background: #f0f4f8;
 }
 .nav-item.active {
-    color: #3497F9; /* Màu xanh dương (Active) */
+    color: #3497F9; 
     font-weight: 500;
-    /* Cần thêm icon/ảnh vào đây */
+  
 }
 
 /* Footer (User & Sign out) */
@@ -120,7 +120,7 @@
     color: #808080;
 }
 .notification-icon {
-    margin-left: auto; /* Đẩy icon chuông sang phải */
+    margin-left: auto; 
     cursor: pointer;
     color: #9094AF;
 }
@@ -137,12 +137,12 @@
 
 /* --- 2. MAIN CONTENT (NỘI DUNG CHÍNH) --- */
 .main-content {
-    flex: 1; /* Chiếm hết phần còn lại */
+    flex: 1; 
     padding: 25px 40px;
-    overflow-y: auto; /* Cho phép cuộn nếu nội dung dài */
+    overflow-y: auto; 
 }
 .page-header h1 {
-    font-family: 'Playfair Display', serif; /* Font 'Playfair' theo Figma */
+    font-family: 'Playfair Display', serif; 
     font-weight: 500;
     font-size: 32px;
     color: #374858;
@@ -150,7 +150,7 @@
     margin-bottom: 20px;
 }
 
-/* --- 3. LƯỚI DASHBOARD (GRID) --- */
+
 .dashboard-grid {
     display: grid;
     grid-template-columns: 3fr 2fr; 
@@ -159,7 +159,7 @@
 
 }
 
-/* Khối chung */
+
 .grid-item {
     background: #FFFFFF;
     border-radius: 15px;
@@ -167,9 +167,9 @@
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
 
-/* Tiêu đề chung của Card */
+
 .card-title {
-    font-family: 'Kanit', sans-serif;
+    font-family: 'Playfair Display', serif;
     font-weight: 400;
     font-size: 20px;
     color: #000000;
@@ -177,25 +177,25 @@
     margin-bottom: 20px;
 }
 
-/* --- 4. CÁC KHỐI GRID CỤ THỂ --- */
+
 
 /* Biểu đồ Task Progress */
 .progress-chart-box {
-    grid-column: 1 / 2; /* Chiếm cột 1 */
-    grid-row: 1 / 2; /* Chiếm hàng 1 */
-    height: 330px; /* Chiều cao cố định theo Figma */
+    grid-column: 1 / 2; 
+    grid-row: 1 / 2; 
+    height: 330px; 
 }
 .chart-container {
-    height: 270px; /* Chiều cao cho canvas biểu đồ */
+    height: 270px; 
     position: relative;
 }
 
 /* Month's Project */
 .months-project-box {
-    grid-column: 2 / 3; /* Chiếm cột 2 */
-    grid-row: 1 / 2; /* Chiếm hàng 1 */
+    grid-column: 2 / 3; 
+    grid-row: 1 / 2;
     height: 330px;
-    /* Cần code Bảng (Table) ở đây */
+   
 }
 .project-title {
     text-align: center;
@@ -205,9 +205,9 @@
 
 /* Task Due Today */
 .due-tasks-box {
-    grid-column: 1 / 2; /* Chiếm cột 1 */
-    grid-row: 2 / 3; /* Chiếm hàng 2 */
-    /* Cần code Bảng (Table) ở đây */
+    grid-column: 1 / 2;
+    grid-row: 2 / 3; 
+   
 }
 
 /* Today Summary */
@@ -328,7 +328,7 @@
     
     
     gap: 25px;
-    align-items: start; /* Ngăn các item ở hàng 2 bị kéo dãn bằng nhau */
+    align-items: start;
 }
 
 /* Frame 1: Timeline*/

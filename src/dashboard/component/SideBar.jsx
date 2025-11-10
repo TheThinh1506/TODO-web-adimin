@@ -15,7 +15,7 @@ const Sidebar = () => {
             try {
                 
                  const accessToken = localStorage.getItem('accessToken');
-                 const user_response = await axios.get(`${API_BASE_URL}/auth/user-info`, {
+                 const user_response = await axios.get(`${API_BASE_URL}/user-info`, {
                      headers: { 'Authorization': `Bearer ${accessToken}` }
                  });
                 
