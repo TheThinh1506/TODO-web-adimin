@@ -12,6 +12,7 @@ import '../style/StaffPage.css';
 
 // **ĐIỂM KẾT NỐI API QUAN TRỌNG:**
 const API_BASE_ROOT = 'http://163.61.110.132:4000'; 
+const API_GROUP_URL = `${API_BASE_ROOT}/api/groups`;
 
 // Dữ liệu giả định (Mock Data) - Nhân viên
 const mockStaffList = [
@@ -52,7 +53,7 @@ const mockStaffList = [
     { 
       id: 5, 
       name: 'Nguyễn Tấn An', 
-      email: 'tan.an@gmail.com', 
+      email: 'anhnguyen9854321  @gmail.com', 
       avatar: '/images/avatar.jpg', 
       phone: '0912345678', 
       birthday: '20/09/2005', 
@@ -98,15 +99,11 @@ const mockGroupList = [
 
 const StaffPage = () => {
     
-    // State quản lý tab (Mặc định là 'Nhân viên')
+   
     const [activeTab, setActiveTab] = useState('Nhân viên');
-    
-    // State quản lý danh sách nhân viên
+
     const [staffList, setStaffList] = useState([]);
-    // State quản lý danh sách nhóm
     const [groupList, setGroupList] = useState([]);
-    
-    // State quản lý nhân viên đang được chọn để xem chi tiết
     const [selectedStaff, setSelectedStaff] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -132,9 +129,24 @@ const StaffPage = () => {
     };
 
     // 3. HÀM MỚI (XỬ LÝ NHÓM)
-    const handleDeleteGroup = (groupId) => {
-        // **ĐIỂM KẾT NỐI API BACKEND (DELETE /group/:id):**
-        alert(`Đang xóa nhóm ID: ${groupId} (Chưa gọi API)`);
+    const handleDeleteGroup = async (groupId) => {
+        if (!window.confirm(`Bạn có chắc chắn muốn xóa nhóm (ID: ${groupId})?`)) {
+            return;
+        }
+
+        try {
+            const accessToken = localStorage.getItem('accessToken');
+            await axios.delete(`${API_GROUP_URL}/${groupId}`, {
+                headers: { 'Authorization': `Bearer ${accessToken}` }
+            });
+
+            alert("Đã xóa nhóm thành công!");
+            setGroupList(prevGroups => prevGroups.filter(g => g.id !== groupId));
+
+        } catch (error) {
+            console.error("Lỗi khi xóa nhóm:", error);
+            alert("Lỗi: " + (error.response?.data?.message || "Không thể xóa nhóm."));
+        }
     };
     
     const handleAddMember = (groupId) => {
@@ -149,17 +161,58 @@ const StaffPage = () => {
     const handleCloseModal = () => {
         setIsModalOpen(false);
     };
-const handleSaveData = (data, type) => {
+const handleSaveData = async (data, type) => {
+        
         if (type === 'Nhân viên') {
-            // **ĐIỂM KẾT NỐI API BACKEND (POST /api/users/create):**
-            // Cần API để tạo nhân viên mới
+            /*******************************************************
+             * *  ĐIỂM KẾT NỐI API (CẦN BỔ SUNG)
+             * GỌI API: POST /api/admin/create-user (Hoặc /auth/sign-up?)
+             * MỤC ĐÍCH: Admin tạo tài khoản nhân viên mới.
+             * *******************************************************/
             console.log("Đang lưu nhân viên mới:", data);
+
         } else if (type === 'Nhóm') {
-            // **ĐIỂM KẾT NỐI API BACKEND (POST /groups/create):**
-            // (Dựa trên API bạn đã cung cấp)
-            console.log("Đang lưu nhóm mới:", data);
+            
+            try {
+                const accessToken = localStorage.getItem('accessToken');
+                
+                const groupBody = {
+                    group_name: data.tenNhom,
+                    description: "Mô tả mặc định"
+                };
+                
+                const groupResponse = await axios.post(
+                    `${API_GROUP_URL}/create`, 
+                    groupBody,
+                    { headers: { 'Authorization': `Bearer ${accessToken}` } }
+                );
+                
+               const newGroup = groupResponse.data.group;
+                console.log("Đã tạo nhóm ID:", newGroup.group_id);
+
+            
+                setGroupList(prevGroupList => [
+                    ...prevGroupList, 
+                    newGroup          
+                ]);
+
+              for (const member of data.members) {
+                    await axios.post(
+                        `${API_GROUP_URL}/add-member`,
+                        { group_id: newGroup.group_id, member_email: member.email },
+                        { headers: { 'Authorization': `Bearer ${accessToken}` } }
+                    );
+                }
+                
+                alert("Tạo nhóm và thêm thành viên thành công!");
+
+            } catch (error) {
+                 console.error("Lỗi khi tạo nhóm:", error);
+                 alert("Lỗi: " + (error.response?.data?.message || "Không thể tạo nhóm."));
+            }
         }
-        setIsModalOpen(false); // Đóng modal sau khi lưu
+        
+        setIsModalOpen(false); 
     };
     return (
         <div className="dashboard-container">

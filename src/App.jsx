@@ -35,22 +35,26 @@ function App() {
         <Route 
             path="/dashboard" 
             element={
-               /* <ProtectedRoute>*/
+              //  <ProtectedRoute>
                     <DashBoardPage />
-              /*  </ProtectedRoute>*/
+              //  </ProtectedRoute>
             } 
         />
         <Route 
             path="/jobs" // <-- Đổi từ /schedule
             element={
-           /* <ProtectedRoute> */
+          //  <ProtectedRoute> 
               <JobsPage />
-           /* </ProtectedRoute> */
+          //  </ProtectedRoute>
             } 
         />
         <Route 
             path="/staff" 
-            element={/*<ProtectedRoute>*/<StaffPage />/*</ProtectedRoute>*/} 
+            element={
+            // <ProtectedRoute>
+              <StaffPage />
+            // </ProtectedRoute>
+            } 
         />
       </Routes>
     </Router>

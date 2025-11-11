@@ -12,16 +12,15 @@ import '../style/JobsPage.css';
 
 import AddJobModal from '../component/AddJobModal'; 
 
-// **ĐIỂM KẾT NỐI API QUAN TRỌNG:**
 const API_BASE_ROOT = 'http://163.61.110.132:4000'; 
 
 const JobsPage = () => {
     
     // 2. STATE QUẢN LÝ DỮ LIỆU
-    const [jobs, setJobs] = useState([]); // State lưu danh sách công việc
-    const [searchTerm, setSearchTerm] = useState(''); // State cho thanh tìm kiếm
-    const [filter, setFilter] = useState('All'); // State cho bộ lọc
-    const [isLoading, setIsLoading] = useState(false); // State tải dữ liệu
+    const [jobs, setJobs] = useState([]); 
+    const [searchTerm, setSearchTerm] = useState(''); 
+    const [filter, setFilter] = useState('All'); 
+    const [isLoading, setIsLoading] = useState(false); 
 
     // 3. STATE QUẢN LÝ MODAL (MỚI)
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -80,7 +79,7 @@ const JobsPage = () => {
         fetchJobs();
     }, []); 
 
-    // 5. LOGIC LỌC (Filter) VÀ TÌM KIẾM (Search)
+    
     const filteredJobs = jobs.filter(job => {
         const matchesFilter = (filter === 'All' || job.department === filter);
         const matchesSearch = job.task.toLowerCase().includes(searchTerm.toLowerCase()) ||
