@@ -27,21 +27,20 @@ const GroupList = ({ groups, selectedStaffId, onSelectStaff, onDeleteStaff, onDe
     return (
         <div className="group-list-container">
             {groups.map(group => (
-                <div key={group.id} className="group-item">
-                    
-                    {/* Header của Nhóm (3 chấm, Tên, Mũi tên) */}
-                    <div className="group-item-header" onClick={() => toggleExpand(group.id)}>
+                <div 
+                key={group.group_id} className="group-item">
+                    <div className="group-item-header" onClick={() => toggleExpand(group.group_id)}>
                         <div className="group-actions">
                            
-                            <button className="kebab-menu-btn" onClick={(e) => toggleMenu(e, group.id)}>
+                            <button className="kebab-menu-btn" onClick={(e) => toggleMenu(e, group.group_id)}>
                                 ⋮
                             </button>
                             
                             
-                            {menuGroupId === group.id && (
+                            {menuGroupId === group.group_id && (
                                 <div className="kebab-dropdown">
-                                    <button onClick={() => onAddMember(group.id)}>Add member</button>
-                                    <button onClick={() => onDeleteGroup(group.id)}>Delete group</button>
+                                    <button onClick={() => onAddMember(group.group_id)}>Add member</button>
+                                    <button onClick={() => onDeleteGroup(group.group_id)}>Delete group</button>
                                 </div>
                             )}
                         </div>
@@ -49,12 +48,12 @@ const GroupList = ({ groups, selectedStaffId, onSelectStaff, onDeleteStaff, onDe
                         <span className="group-name">{group.name}</span>
                         
                    
-                        <span className={`group-toggle-arrow ${expandedGroupId === group.id ? 'expanded' : ''}`}>
+                        <span className={`group-toggle-arrow ${expandedGroupId === group.group_id ? 'expanded' : ''}`}>
                             ▼
                         </span>
                     </div>
                 
-                    {expandedGroupId === group.id && (
+                    {expandedGroupId === group.group_id && (
                         <div className="member-list">
                             {group.members.map(member => (
                                 <div 
