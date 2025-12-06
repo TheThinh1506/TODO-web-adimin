@@ -7,7 +7,8 @@ import DashBoardPage from './dashboard/pages/DashBoardpage';
 
 import JobsPage from './jobs/pages/Jobspage';
 import StaffPage from './staff/pages/StaffPage';
-
+import SettingsPage from './settings/pages/SettingsPage';
+import ProjectDetail from './project/pages/ProjectDetail';
 const isAuthenticated = () => {
     return localStorage.getItem('authToken') ? true : false;
 };
@@ -40,6 +41,7 @@ function App() {
               //  </ProtectedRoute>
             } 
         />
+        <Route path="/project/:id" element={<ProjectDetail />} />
         <Route 
             path="/jobs" // <-- Đổi từ /schedule
             element={
@@ -54,8 +56,16 @@ function App() {
             // <ProtectedRoute>
               <StaffPage />
             // </ProtectedRoute>
-            } 
+            }    
         />
+        <Route 
+            path="/setting" 
+            element={
+            // <ProtectedRoute>
+              <SettingsPage />
+            // </ProtectedRoute>
+            }
+            />
       </Routes>
     </Router>
   );

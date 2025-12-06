@@ -1,0 +1,105 @@
+.notification-settings-container {
+    width: 100%;
+    max-width: 700px; /* Giới hạn chiều rộng */
+    margin: 0 auto;
+}
+
+.notification-title {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 30px;
+    padding-left: 10px;
+}
+
+.notification-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.notification-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-radius: 20px;
+    background-color: #FFFFFF; /* Mặc định là trắng */
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Các item phụ có nền xám nhạt (theo thiết kế) */
+.notification-item.secondary-bg {
+    background-color: rgba(150, 150, 150, 0.1);
+    border: none;
+}
+
+.notification-label {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    color: #000000;
+    letter-spacing: 0.01em;
+}
+
+/* --- CSS CHO NÚT GẠT (SWITCH) --- */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 20px;
+}
+
+.switch input { 
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc; /* Màu khi tắt */
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: #538CFF; /* Màu khi bật (Xanh dương) */
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #538CFF;
+}
+
+input:checked + .slider:before {
+    -webkit-transform: translateX(20px);
+    -ms-transform: translateX(20px);
+    transform: translateX(20px);
+}
+
+/* Rounded sliders */
+.slider.round {
+    border-radius: 20px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
