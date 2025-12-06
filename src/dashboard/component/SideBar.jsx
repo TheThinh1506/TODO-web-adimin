@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom'; 
 import axios from 'axios';
- const API_BASE_ROOT = 'http://163.61.110.132:4000';
+const API_BASE_ROOT = 'http://34.124.178.44:4000'; 
  const API_BASE_URL = `${API_BASE_ROOT}/api/auth`;
 const Sidebar = () => {
     const navigate = useNavigate();
@@ -37,7 +37,7 @@ const Sidebar = () => {
            
             const accessToken = localStorage.getItem('accessToken');
              const refreshToken = localStorage.getItem('refreshToken');
-             await axios.post(`${API_BASE_URL}/auth/sign-out`, 
+             await axios.post(`${API_BASE_URL}/sign-out`, 
                  { refreshToken: refreshToken }, 
                  { headers: { 'Authorization': `Bearer ${accessToken}` } } 
              );
@@ -94,7 +94,7 @@ const Sidebar = () => {
                     onClick={() => navigate('/jobs')} 
                 >
                    
-                    <span>Jobs</span>
+                    <span>Projects</span>
                 </div>
                 
                 <div 

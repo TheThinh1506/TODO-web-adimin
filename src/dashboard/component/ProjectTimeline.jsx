@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import '../style/Timeline.css'; 
 import TaskDetailsPopup from './TaskDetailsPopup';
 
-const API_BASE_ROOT = 'http://163.61.110.132:4000';
+const API_BASE_ROOT = 'http://34.124.178.44:4000'; 
 const API_BASE_URL = `${API_BASE_ROOT}/api`;
 const INITIAL_MILESTONES = [
     { 

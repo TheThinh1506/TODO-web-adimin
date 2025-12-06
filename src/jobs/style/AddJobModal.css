@@ -1,237 +1,226 @@
-
-/* Lớp phủ toàn màn hình */
+/* 1. Lớp phủ toàn màn hình (Căn giữa Modal) */
 .modal-overlay {
     position: fixed; 
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
+    top: 0; left: 0; 
+    width: 100vw; height: 100vh;
     background-color: rgba(0, 0, 0, 0.5); 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000; 
+    display: flex; 
+    justify-content: center; /* Căn giữa ngang */
+    align-items: center;     /* Căn giữa dọc */
+    z-index: 1000;
+    backdrop-filter: blur(2px); /* Hiệu ứng mờ nền */
 }
 
-/* Khung nội dung Modal */
+/* 2. Khung nội dung Modal (SỬA LẠI WIDTH) */
 .modal-content {
-    width: 1116px; 
-    height: auto; 
-    max-height: 90vh; 
+    /* Đặt chiều rộng nhỏ lại vừa đủ cho 1 cột form */
+    width: 550px; 
+    max-width: 90vw; /* Không vượt quá chiều rộng màn hình điện thoại */
+    
+    max-height: 90vh; /* Không vượt quá chiều cao màn hình */
     background: #FFFFFF;
-    border-radius: 12px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-    display: flex;
-    flex-direction: column;
+    border-radius: 16px; /* Bo góc tròn hơn */
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2); /* Bóng đổ đẹp */
+    
+    display: flex; 
+    flex-direction: column; 
     overflow: hidden; 
-}
-
-/* Bố cục 2 cột */
-.modal-grid {
-    display: flex;
-    padding: 20px 30px;
-}
-
-.modal-title {
     font-family: 'Montserrat', sans-serif;
-    font-weight: 600;
-    font-size: 20px;
-    color: #000000;
-    margin-top: 0;
-    margin-bottom: 25px;
 }
 
-/* CỘT TRÁI */
-.modal-left {
-    width: 320px; 
+/* 3. Header (Tiêu đề) */
+.modal-header {
+    padding: 25px 35px 15px 35px;
+    background: #fff;
     flex-shrink: 0;
 }
 
-/* CỘT PHẢI */
-.modal-right {
-    flex-grow: 1;
-    padding-left: 20px;
-}
-
-/* Đường phân cách */
-.modal-divider {
-    width: 3px;
-    background-color: #D9D9D9;
-    margin: 0 20px;
-}
-
-/* CSS Cho Form (Cột trái) */
-.form-group {
-    margin-bottom: 15px;
-}
-.form-group label {
-    display: block;
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 500;
-    font-size: 11px;
-    color: #000000;
-    margin-bottom: 5px;
-}
-.form-group input[type="text"],
-.form-group input[type="date"],
-.form-group select,
-.form-group textarea {
-    width: 100%;
-    height: 30px;
-    padding: 0 10px;
-    border: 1px solid rgba(150, 150, 150, 0.3);
-    border-radius: 5px;
-    background: #FFFFFF;
-    box-sizing: border-box;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 12px;
-}
-.form-group textarea {
-    height: 161px;
-    resize: none; 
-    padding-top: 10px;
-}
-.form-row {
-    display: flex;
-    gap: 15px;
-}
-.form-row .form-group {
-    flex: 1;
-}
-
-/* CSS Cho Bảng (Cột phải) */
-.subtask-table-container {
-    width: 100%;
-    border: 1px solid rgba(0, 0, 0, 0.3);
-    border-radius: 12px;
-    background: #FCFCFC;
-    padding: 10px;
-    max-height: 280px; 
-    overflow-y: auto;
-}
-.subtask-table-container table {
-    width: 100%;
-    border-collapse: collapse;
-}
-.subtask-table-container th {
-    background-color: #EAEAEA;
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 600;
-    font-size: 14px;
-    color: #000000;
-    padding: 8px;
-    text-align: center ;
-}
-.subtask-table-container td {
-    padding: 5px;
-    border-bottom: 0.5px solid #CFCFCF;
-}
-.subtask-row:last-child td {
-    border-bottom: none;
-}
-/* Style cho các input trong bảng */
-.subtask-input {
-    width: 100%;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 5px;
-    font-size: 13px;
-    text-align: center;
-}
-.subtask-input.task-name { width: 95%; }
-.subtask-input.task-deadline { width: 90%; }
-.add-employee-btn {
-    background: #CBE3FA;
-    border: 1px solid #1976D2;
-    color: #1976D2;
-    font-size: 10px;
-    font-weight: 500;
-    border-radius: 4px;
-    cursor: pointer;
-    padding: 3px 5px;
-}
-.employee-tag {
-    background-color: #D9D9D9;
-    border-radius: 11.5px;
-    padding: 3px 8px;
-    font-size: 12px;
-    margin-right: 5px;
-}
-.action-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    color: #B3261E; 
-}
-.add-row-btn {
-    background: none;
-    border: none;
-    font-size: 20px;
-    color: #1976D2;
-    cursor: pointer;
-    margin-top: 10px;
-}
-
-/* Footer (Nút Save/Cancel) */
-.modal-footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    padding: 15px 30px;
-    border-top: 1px solid #EAEAEA;
-    background-color: #FAFAFA;
-}
-.btn {
-    width: 60px;
-    height: 30px;
-    border: none;
-    border-radius: 10px;
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 500;
-    font-size: 12px;
-    cursor: pointer;
-}
-.btn-save {
-    background: #538CFF;
-    color: #FFFFFF;
-}
-.btn-cancel {
-    background: rgba(150, 150, 150, 0.3);
-    color: #000000;
-}
-.employee-tag {
-    background-color: #D9D9D9;
-    border-radius: 11.5px;
-    padding: 3px 5px 3px 8px;
-    font-size: 12px;
-    margin-right: 5px;
-    margin-bottom: 5px; 
-    display: inline-flex; 
-    align-items: center;
-    gap: 5px;
-}
-
-/* Nút Xóa Employee (Icon X) */
-.remove-employee-btn {
-    background: none;
-    border: none;
-    padding: 0;
+.modal-title {
+    font-size: 24px; 
+    font-weight: 700; 
+    color: #000; 
     margin: 0;
+    text-align: left; /* Tiêu đề căn trái giống hình mẫu */
+}
+
+/* 4. Body (Chứa Form) */
+.modal-body {
+    padding: 10px 35px 25px 35px; /* Padding đều 2 bên để form vào giữa */
+    overflow-y: auto; /* Cho phép cuộn nếu nội dung dài */
+    flex-grow: 1;
+}
+
+/* --- FORM STYLES --- */
+.form-group { 
+    margin-bottom: 20px; 
+}
+
+.form-group label {
+    display: block; 
+    font-weight: 600; 
+    font-size: 14px; 
+    color: #333; 
+    margin-bottom: 8px;
+}
+
+/* Input Full Width (Luôn chiếm 100% khung chứa) */
+.full-width-input {
+    width: 100%; 
+    height: 45px; 
+    padding: 0 15px;
+    border: 1px solid #E0E0E0; 
+    border-radius: 10px; /* Bo góc input */
+    font-family: 'Montserrat', sans-serif; 
+    font-size: 14px;
+    box-sizing: border-box; /* Quan trọng để padding không làm vỡ layout */
+    outline: none; 
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.full-width-input:focus { 
+    border-color: #538CFF; 
+    box-shadow: 0 0 0 3px rgba(83, 140, 255, 0.1);
+}
+
+/* Hàng chứa 2 input (Undertake, Deadline) */
+.form-row { 
+    display: flex; 
+    gap: 20px; /* Khoảng cách giữa 2 ô */
+}
+
+.half-width { 
+    flex: 1; /* Chia đều không gian */
+}
+
+.half-width select, 
+.half-width input {
+    width: 100%; 
+    height: 45px; 
+    padding: 0 15px;
+    border: 1px solid #E0E0E0; 
+    border-radius: 10px;
+    font-family: 'Montserrat', sans-serif; 
+    font-size: 14px;
+    box-sizing: border-box; 
+    outline: none;
+}
+
+.half-width select:focus, 
+.half-width input:focus { 
+    border-color: #538CFF; 
+}
+
+/* --- Description & Add Document --- */
+.description-container {
+    display: flex; 
+    flex-direction: column; 
+}
+
+.textarea-wrapper {
+    position: relative;
+    border: 1px solid #E0E0E0;
+    border-radius: 12px;
+    background: #F9F9F9;
+    padding: 15px;
+    min-height: 180px; 
+    display: flex; 
+    flex-direction: column;
+}
+
+.textarea-wrapper textarea {
+    width: 100%; 
+    flex-grow: 1;
+    border: none; 
+    background: transparent;
+    resize: none; 
+    outline: none;
+    font-family: 'Montserrat', sans-serif; 
+    font-size: 14px; 
+    line-height: 1.5;
+    padding-bottom: 40px; /* Chừa chỗ cho nút Add document */
+}
+
+/* Nút + Add document */
+.btn-add-doc {
+    position: absolute; 
+    bottom: 15px; 
+    right: 15px;
+    background-color: #538CFF; 
+    color: white;
+    border: none; 
+    border-radius: 8px; 
+    padding: 8px 15px;
+    font-size: 12px; 
+    font-weight: 600; 
     cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    width: 16px;
-    height: 16px;
+    box-shadow: 0 2px 6px rgba(83, 140, 255, 0.3);
     transition: background-color 0.2s;
 }
 
-.remove-employee-btn:hover {
-    background-color: rgb(198, 16, 16); 
+.btn-add-doc:hover { 
+    background-color: #3a75ea; 
 }
-.remove-employee-btn img {
-    width: 10px; 
-    height: 10px;
+
+/* Danh sách file (File Chips) */
+.file-preview-list {
+    position: absolute; 
+    bottom: 15px; 
+    left: 15px; 
+    right: 150px; /* Tránh đè lên nút Add */
+    display: flex; 
+    gap: 8px; 
+    overflow-x: auto;
 }
+
+.file-chip {
+    background: white; 
+    padding: 4px 10px;
+    border-radius: 6px; 
+    font-size: 12px;
+    display: flex; 
+    align-items: center; 
+    gap: 6px;
+    border: 1px solid #ddd; 
+    white-space: nowrap;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.file-chip button {
+    border: none; 
+    background: none; 
+    color: #ff4d4f; 
+    cursor: pointer; 
+    font-weight: bold; 
+    font-size: 14px; 
+    padding: 0;
+}
+
+/* 5. Footer Buttons */
+.modal-footer {
+    padding: 20px 35px; 
+    border-top: 1px solid #eee; 
+    display: flex; 
+    justify-content: flex-end; 
+    gap: 15px;
+    background: #fff;
+}
+
+.btn { 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px; 
+    padding: 0 30px; 
+    border-radius: 10px; 
+    border: none; 
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600; 
+    font-size: 14px; 
+    cursor: pointer; 
+    transition: opacity 0.2s;
+    white-space: nowrap;
+}
+
+.btn:hover { opacity: 0.9; }
+.btn-save { background-color: #538CFF; color: white; }
+.btn-cancel { background-color: #E0E0E0; color: #333; }

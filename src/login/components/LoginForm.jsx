@@ -3,8 +3,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-
-const API_BASE_ROOT = 'http://163.61.110.132:4000'; 
+const API_BASE_ROOT = 'http://34.124.178.44:4000'; 
 const API_BASE_URL = `${API_BASE_ROOT}/api/auth`;
 
 const LoginForm = () => {
