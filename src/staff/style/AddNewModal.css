@@ -1,232 +1,249 @@
-
-
-/* Lớp phủ toàn màn hình */
+/* Lớp phủ mờ */
 .modal-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
     background-color: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
+    z-index: 2000;
+    backdrop-filter: blur(2px);
 }
 
-/* Khung nội dung Modal */
-.modal-content-staff {
-    width: 500px; 
+/* Khung Modal Chính */
+.add-member-modal {
+    width: 400px;
+    height: 420px;
     background: #FFFFFF;
     border-radius: 20px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden; 
-}
-
-/* Tabs */
-.modal-tabs-staff {
-    display: flex;
-    border-bottom: 2px solid #F0F0F0;
-    padding: 10px 30px 0 30px;
-    gap: 30px;
-}
-.modal-tab-btn-staff {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 400;
-    font-size: 18px;
-    color: #888;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 10px 0;
-    border-bottom: 3px solid transparent; 
-}
-.modal-tab-btn-staff.active {
-    font-weight: 600;
-    color: #1976D2; 
-    border-bottom-color: #1976D2; 
-}
-
-
-.modal-body-staff {
-    padding: 20px 30px;
-    max-height: 70vh; 
-    overflow-y: auto;
-}
-
-
-.form-container-staff {
-    display: flex;
-    flex-direction: column;
-    gap: 15px; 
-}
-
-.avatar-placeholder {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    background: #EADDFF; 
-    margin: 10px auto 20px auto; 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-   
-}
-
-.employee-form-grid {
-    display: grid;
-    grid-template-columns: auto 1fr; 
-    gap: 15px 10px;
-    align-items: center; 
-}
-.employee-form-grid label {
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 500;
-    font-size: 16px; 
-    color: #727272;
-    text-align: left;
-    padding-right: 10px;
-}
-.employee-form-grid input[type="text"],
-.employee-form-grid input[type="email"],
-.employee-form-grid input[type="date"] {
-    height: 35px;
-    padding: 0 10px;
-    border: 1px solid #E0E0E0; 
-    background: #F8F8F8; 
-    border-radius: 8px;
-    font-size: 14px;
-}
-
-
-.date-input-wrapper {
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
     position: relative;
+    padding: 25px 30px; /* Tăng padding 2 bên một chút */
+    
     display: flex;
+    flex-direction: column;
+    align-items: center; /* <--- SỬA: Căn giữa toàn bộ nội dung */
+    
+    font-family: 'Montserrat', sans-serif;
 }
 
+/* Tiêu đề "Add Member" */
+.am-title {
+    font-size: 22px; /* Tăng size chút cho rõ */
+    font-weight: 700;
+    margin-bottom: 25px;
+    color: #000;
+    text-align: center;
+}
 
-.checkbox-group {
+/* --- PHẦN 1: INVITE CODE --- */
+.invite-code-section {
     display: flex;
     align-items: center;
-    gap: 20px;
-    height: 35px;
+    width: 100%;
+    margin-bottom: 15px;
+    gap: 15px;
 }
-.checkbox-group label {
-    text-align: left;
+
+.invite-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #000;
+    white-space: nowrap;
+}
+
+.code-box {
+    flex-grow: 1;
+    height: 40px; /* Tăng chiều cao lên chút cho dễ nhìn */
+    
+    /* <--- SỬA: MÀU NHẠT HƠN (Lighter Gray) */
+    background: #F2F2F2; /* Nhạt hơn so với #D9D9D9 cũ */
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border-radius: 8px; /* Bo góc mềm hơn */
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+}
+
+.code-box:hover {
+    background: #E5E5E5; /* Đậm hơn chút xíu khi hover */
+    border-color: #ccc;
+}
+
+.copy-icon {
+    font-size: 16px;
+    color: #555;
+}
+
+.invite-code-text {
+    font-weight: 600;
+    font-size: 14px;
+    color: #333;
+    user-select: all;
+    letter-spacing: 0.5px;
+}
+
+/* --- PHẦN 2: SEARCH EMAIL --- */
+.search-email-box {
+    width: 100%;
+    height: 40px;
+    background: #FFFFFF;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1); /* Bóng đổ mềm hơn */
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    margin-bottom: 5px;
+    box-sizing: border-box;
+    border: 1px solid #f0f0f0;
+}
+
+.search-icon {
+    font-size: 16px;
+    margin-right: 10px;
+    color: #888;
+}
+
+.email-input {
+    border: none;
+    outline: none;
+    flex-grow: 1;
+    font-family: 'Montserrat', sans-serif;
     font-size: 14px;
     color: #333;
 }
-.checkbox-group input[type="checkbox"] {
-    width: 16px;
-    height: 16px;
-}
-/* --- KẾT THÚC STYLE TAB NHÂN VIÊN --- */
 
-
-/* --- STYLE CHO TAB NHÓM --- */
-.form-container-group {
-     display: flex;
-     flex-direction: column;
-     gap: 15px;
-}
-.form-group-staff.full-width {
-    display: flex;
-    flex-direction: column;
-}
-.form-group-staff.full-width label {
-    font-weight: 500;
-    font-size: 14px;
-    color: #555;
-    margin-bottom: 5px;
-}
-.form-group-staff.full-width input[type="text"] {
-    height: 35px;
-    padding: 0 10px;
-    border: 1px solid #CAC4D0;
-    border-radius: 8px;
-    font-size: 14px;
-}
-.member-list-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
+/* Text nhỏ "Đã chọn X người" */
+.selected-count {
+    width: 100%;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    color: #666;
     margin-bottom: 10px;
+    padding-left: 5px;
+    margin-top: 8px;
 }
-.add-member-popup-container {
-    position: relative; 
-}
-.add-member-btn-group {
-    background: #CBE3FA;
-    border: 1px solid #1976D2;
-    color: #1976D2;
-    font-size: 12px;
-    font-weight: 500;
-    border-radius: 4px;
-    cursor: pointer;
-    padding: 5px 8px;
-}
-/*MemberSearchPopup */
-.member-search-popup {
-    position: absolute;
-    width: 250px;
-    height: 300px;
-    background: #FFFFFF;
-    border: 1px solid #ddd;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    border-radius: 8px;
-    top: 35px; 
-    left: 0;
-    z-index: 1010;
+
+/* --- PHẦN 3: DANH SÁCH LIST (KHUNG XÁM) --- */
+.member-list-frame {
+    width: 100%;
+    flex-grow: 1; 
+    background: rgba(240, 240, 240, 0.5); /* Nền xám rất nhạt */
+    border: 1px solid #E0E0E0;
+    border-radius: 12px;
+    padding: 10px;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+    margin-bottom: 20px;
 }
 
-.employee-tag {
-    background-color: #D9D9D9;
-    border-radius: 11.5px;
-    padding: 3px 5px 3px 8px; 
-    font-size: 12px;
-    margin: 2px;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px; 
-}
-.remove-employee-btn {
-    background: none; border: none; padding: 0; margin: 0;
-    cursor: pointer; display: inline-flex; align-items: center;
-    justify-content: center; border-radius: 50%;
-    width: 16px; height: 16px;
-}
-.remove-employee-btn:hover { background-color: rgba(0, 0, 0, 0.1); }
-.remove-employee-btn img { width: 10px; height: 10px; }
-
-
-
-
-.form-actions-staff {
+/* Header của List */
+.list-header {
     display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: 20px;
-    grid-column: 1 / 3; 
-}
-.btn {
-    width: 60px;
-    height: 30px;
-    border: none;
-    border-radius: 10px;
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 500;
+    justify-content: space-between;
+    padding: 0 10px;
+    margin-bottom: 8px;
     font-size: 12px;
+    font-weight: 700;
+    color: #333;
+    text-decoration: none; /* Bỏ gạch chân cho thoáng */
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+}
+
+.list-scroll-area {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+/* Scrollbar đẹp */
+.list-scroll-area::-webkit-scrollbar { width: 4px; }
+.list-scroll-area::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+
+/* Từng dòng email */
+.email-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 10px;
+    border-bottom: 1px solid #eee;
+    background: white;
+    margin-bottom: 5px;
+    border-radius: 6px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.email-text {
+    font-size: 13px;
+    font-weight: 500;
+    color: #333;
+}
+
+.btn-remove {
+    width: 22px;
+    height: 22px;
+    border: 1px solid #ff4d4f;
+    border-radius: 6px;
+    background: white;
+    color: #ff4d4f;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 1;
+    transition: all 0.2s;
 }
-.btn-save {
+
+.btn-remove:hover {
+    background: #ff4d4f;
+    color: white;
+}
+
+/* --- PHẦN 4: BUTTONS --- */
+.am-actions {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end; /* Căn nút sang phải */
+    gap: 15px;
+}
+
+.btn-am {
+    padding: 8px 25px; /* Padding rộng hơn */
+    height: 38px;
+    border-radius: 10px;
+    border: none;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s;
+}
+
+.btn-invite {
     background: #538CFF;
-    color: #FFFFFF;
+    color: white;
+    box-shadow: 0 2px 5px rgba(83, 140, 255, 0.3);
 }
-.btn-cancel {
-    background: rgba(150, 150, 150, 0.3);
-    color: #000000;
+.btn-invite:hover {
+    opacity: 0.9;
+}
+
+.btn-am-cancel {
+    background: #F0F0F0;
+    color: #555;
+}
+.btn-am-cancel:hover {
+    background: #E0E0E0;
 }

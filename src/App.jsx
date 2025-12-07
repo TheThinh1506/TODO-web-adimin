@@ -8,7 +8,8 @@ import DashBoardPage from './dashboard/pages/DashBoardpage';
 import JobsPage from './jobs/pages/Jobspage';
 import StaffPage from './staff/pages/StaffPage';
 import SettingsPage from './settings/pages/SettingsPage';
-import ProjectDetail from './project/pages/ProjectDetail';
+import MilestonePage from './project/pages/milestonePage';
+import NotificationPage from './notification/pages/NotificationPage';
 const isAuthenticated = () => {
     return localStorage.getItem('authToken') ? true : false;
 };
@@ -41,7 +42,7 @@ function App() {
               //  </ProtectedRoute>
             } 
         />
-        <Route path="/project/:id" element={<ProjectDetail />} />
+        
         <Route 
             path="/jobs" // <-- Đổi từ /schedule
             element={
@@ -50,6 +51,7 @@ function App() {
           //  </ProtectedRoute>
             } 
         />
+        <Route path="/milestone/:id" element={<MilestonePage />} />
         <Route 
             path="/staff" 
             element={
@@ -66,6 +68,7 @@ function App() {
             // </ProtectedRoute>
             }
             />
+            <Route path="/notification" element={<NotificationPage />} />
       </Routes>
     </Router>
   );

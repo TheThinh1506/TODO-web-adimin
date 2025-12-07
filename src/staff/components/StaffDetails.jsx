@@ -1,4 +1,4 @@
-// src/staff/components/StaffDetails.jsx
+
 
 import React from 'react';
 

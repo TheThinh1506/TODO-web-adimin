@@ -1,196 +1,157 @@
-
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import '../style/AddNewModal.css'; 
-import MemberSearchPopup from './MemberSearchPopup';
 
+const API_BASE_ROOT = 'http://34.124.178.44:4000'; 
 
-
-
-// --- COMPONENT MODAL CHÍNH ---
-const AddNewModal = ({ onClose, onSave, mockStaffList }) => {
+const AddNewModal = ({ onClose, onInviteSuccess }) => {
     
-    // State quản lý tab (Mặc định là 'Nhân viên')
-    const [activeTab, setActiveTab] = useState('Nhân viên');
+    const [inviteCode, setInviteCode] = useState('Loading...'); 
+    const [emailInput, setEmailInput] = useState('');
+    const [invitedList, setInvitedList] = useState([]); 
+    const [isLoading, setIsLoading] = useState(false);
+    const [isCopied, setIsCopied] = useState(false);
     
-    // --- State cho Tab 1: Thêm Nhân viên ---
-    const [hoTen, setHoTen] = useState('');
-    const [ngaySinh, setNgaySinh] = useState('');
-    const [sdt, setSdt] = useState('');
-    const [email, setEmail] = useState('');
-    const [gioiTinh, setGioiTinh] = useState('Nam'); // Giá trị mặc định
-    const [diaChi, setDiaChi] = useState('');
+    const currentWorkspaceId = localStorage.getItem('currentWorkspaceId');
 
-    // --- State cho Tab 2: Thêm Nhóm ---
-    const [tenNhom, setTenNhom] = useState('');
-    const [selectedMembers, setSelectedMembers] = useState([]);
-    const [isSearchOpen, setIsSearchOpen] = useState(false); // State quản lý popup tìm kiếm
-
-    // --- HÀM XỬ LÝ (TAB 1) ---
-    const handleSaveEmployee = () => {
-        const employeeData = { hoTen, ngaySinh, sdt, email, gioiTinh, diaChi };
-        
-        // **ĐIỂM KẾT NỐI API BACKEND (POST /api/users/create):**
-        // Cần API để tạo nhân viên mới
-        onSave(employeeData, 'Nhân viên');
-    };
-
-    // --- HÀM XỬ LÝ (TAB 2) ---
-    const handleSaveGroup = () => {
-        const groupData = { tenNhom, members: selectedMembers };
-        
-        // **ĐIỂM KẾT NỐI API BACKEND (POST /groups/create):**
-        // API này bạn đã có.
-        onSave(groupData, 'Nhóm');
-    };
-
-    // Thêm thành viên vào danh sách (từ popup)
-    const handleAddMemberToGroup = (member) => {
-        // Chỉ thêm nếu chưa tồn tại
-        if (!selectedMembers.find(m => m.id === member.id)) {
-            setSelectedMembers([...selectedMembers, member]);
-        }
-        setIsSearchOpen(false); // Đóng popup
-    };
-
-    // Xóa thành viên khỏi danh sách
-    const handleRemoveMemberFromGroup = (memberId) => {
-        setSelectedMembers(selectedMembers.filter(m => m.id !== memberId));
-    };
-
-    // Hàm Save chính (dựa trên tab đang active)
-    const handleSaveClick = () => {
-        if (activeTab === 'Nhân viên') {
-            handleSaveEmployee();
+    useEffect(() => {
+        if (currentWorkspaceId) {
+            setInviteCode(`WS-${currentWorkspaceId}-${Math.floor(Math.random() * 10000)}`);
         } else {
-            handleSaveGroup();
+            setInviteCode("NO-WORKSPACE-ID");
+        }
+    }, [currentWorkspaceId]);
+
+    const handleCopyCode = () => {
+        navigator.clipboard.writeText(inviteCode);
+        setIsCopied(true);
+        setTimeout(() => setIsCopied(false), 1000);
+    };
+
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const email = emailInput.trim();
+            if (!email) return;
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                alert("Email không hợp lệ!");
+                return;
+            }
+
+            if (invitedList.some(item => item.email === email)) {
+                alert('Email này đã có trong danh sách chờ!');
+                return;
+            }
+
+            // Thêm vào danh sách (Mặc định Member, không cho chọn nữa)
+            setInvitedList([
+                ...invitedList, 
+                { email: email, role: 'Member' }
+            ]);
+            setEmailInput(''); 
         }
     };
 
+    const handleRemoveEmail = (emailToRemove) => {
+        setInvitedList(invitedList.filter(item => item.email !== emailToRemove));
+    };
+
+    const handleInviteClick = async () => {
+        if (invitedList.length === 0) {
+            alert("Vui lòng nhập ít nhất 1 email!");
+            return;
+        }
+        if (!currentWorkspaceId) {
+            alert("Lỗi: Không tìm thấy Workspace ID.");
+            return;
+        }
+
+        setIsLoading(true);
+        try {
+            const accessToken = localStorage.getItem('accessToken');
+
+            const promises = invitedList.map(member => {
+                return axios.post(
+                    `${API_BASE_ROOT}/api/workspaces/${currentWorkspaceId}/add`,
+                    { email: member.email, role: 'Member' }, // Mặc định role Member
+                    { headers: { 'Authorization': `Bearer ${accessToken}` } }
+                );
+            });
+
+            await Promise.all(promises);
+
+            alert("✅ Đã thêm thành viên thành công!");
+            if (onInviteSuccess) onInviteSuccess(); 
+            onClose();
+
+        } catch (error) {
+            console.error("Lỗi thêm nhân viên:", error);
+            const msg = error.response?.data?.message || "Lỗi Server.";
+            alert(`Lỗi: ${msg}`);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     return (
         <div className="modal-overlay" onClick={onClose}>
-            {/* Ngăn click xuyên qua lớp phủ */}
-            <div className="modal-content-staff" onClick={(e) => e.stopPropagation()}>
+            <div className="add-member-modal" onClick={(e) => e.stopPropagation()}>
+                <h2 className="am-title">Thêm Nhân Viên Mới</h2>
+
+                {/* Phần Mã Mời */}
+                <div className="invite-code-section">
+                    <span className="invite-label">Mã mời:</span>
+                    <div className="code-box" onClick={handleCopyCode}>
+                        <span className="copy-icon">❐</span>
+                        <span className="invite-code-text">{inviteCode}</span>
+                        {isCopied && <span style={{marginLeft:'10px', color:'green', fontSize:'12px'}}>Đã chép!</span>}
+                    </div>
+                </div>
+                <hr style={{margin: '15px 0', borderTop: '1px solid #eee'}}/>
+
+                {/* Phần Nhập Email */}
+                <div className="search-email-box">
+                    <span className="search-icon">✉️</span>
+                    <input 
+                        type="text" className="email-input" 
+                        placeholder="Nhập email nhân viên & nhấn Enter..."
+                        value={emailInput} onChange={(e) => setEmailInput(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                    />
+                </div>
                 
-                {/* Header (Tabs) */}
-                <div className="modal-tabs-staff">
-                    <button 
-                        className={`modal-tab-btn-staff ${activeTab === 'Nhân viên' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('Nhân viên')}
-                    >
-                        Nhân viên
-                    </button>
-                    <button 
-                        className={`modal-tab-btn-staff ${activeTab === 'Nhóm' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('Nhóm')}
-                    >
-                        Nhóm
-                    </button>
+                <div className="selected-count">Danh sách chờ: {invitedList.length} người</div>
+
+                {/* Danh sách (BỎ CỘT ROLE SELECTION) */}
+                <div className="member-list-frame">
+                    <div className="list-header">
+                        <span style={{textAlign: 'left', flex: 1}}>Email</span>
+                        <span style={{textAlign: 'center', width: '50px'}}>Xóa</span>
+                    </div>
+                    
+                    <div className="list-scroll-area">
+                        {invitedList.length === 0 ? (
+                            <div style={{textAlign:'center', color:'#888', padding:'20px'}}>(Chưa nhập email nào)</div>
+                        ) : (
+                            invitedList.map((item, index) => (
+                                <div key={index} className="email-item">
+                                    <span className="email-text" style={{flex: 1}}>{item.email}</span>
+                                    <div style={{width: '50px', textAlign:'center'}}>
+                                        <button className="btn-remove" onClick={() => handleRemoveEmail(item.email)}>✕</button>
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                    </div>
                 </div>
 
-                {/* Nội dung (Dựa trên Tab) */}
-                <div className="modal-body-staff">
-                    
-                    {/* ---- TAB 1: THÊM NHÂN VIÊN (Bố cục mới) ---- */}
-                    {activeTab === 'Nhân viên' && (
-                        <div className="form-container-staff">
-                            {/* Avatar */}
-                            <div className="avatar-placeholder">
-                              
-                            </div>
-
-                            {/* Lưới Form 2 cột */}
-                            <div className="employee-form-grid">
-                                <label htmlFor="hoTen">Họ tên:</label>
-                                <input id="hoTen" type="text" value={hoTen} onChange={(e) => setHoTen(e.target.value)} />
-
-                                <label htmlFor="ngaySinh">Ngày sinh:</label>
-                                <div className="date-input-wrapper">
-                                    <input id="ngaySinh" type="date" value={ngaySinh} onChange={(e) => setNgaySinh(e.target.value)} />
-                                </div>
-
-                                <label htmlFor="sdt">SĐT:</label>
-                                <input id="sdt" type="text" value={sdt} onChange={(e) => setSdt(e.target.value)} />
-
-                                <label htmlFor="email">Email:</label>
-                                <input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-
-                                <label>Giới tính:</label>
-                                <div className="checkbox-group">
-                                    <input type="checkbox" id="nam" checked={gioiTinh === 'Nam'} onChange={() => setGioiTinh('Nam')} />
-                                    <label htmlFor="nam">Nam</label>
-                                    <input type="checkbox" id="nu" checked={gioiTinh === 'Nữ'} onChange={() => setGioiTinh('Nữ')} />
-                                    <label htmlFor="nu">Nữ</label>
-                                </div>
-
-                                <label htmlFor="diaChi">Địa chỉ:</label>
-                                <input id="diaChi" type="text" value={diaChi} onChange={(e) => setDiaChi(e.target.value)} />
-                            </div>
-
-                            {/* Nút Save/Cancel (Nằm trong form) */}
-                            <div className="form-actions-staff">
-                                <button type="button" className="btn btn-cancel" onClick={onClose}>Cancel</button>
-                                <button type="button" className="btn btn-save" onClick={handleSaveClick}>Save</button>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* ---- TAB 2: THÊM NHÓM (Bố cục mới) ---- */}
-                    {activeTab === 'Nhóm' && (
-                        <div className="form-container-group">
-                            {/* Tên nhóm */}
-                            <div className="form-group-staff full-width">
-                                <label>Tên nhóm:</label>
-                                <input type="text" value={tenNhom} onChange={(e) => setTenNhom(e.target.value)} />
-                            </div>
-                            
-                            {/* Thành viên */}
-                            <div className="form-group-staff full-width">
-                                <label>Thành viên:</label>
-                                <div className="member-list-group">
-                                    {selectedMembers.map(member => (
-                                        <span key={member.id} className="employee-tag">
-                                            {member.name}
-                                            <button 
-                                                type="button" 
-                                                className="remove-employee-btn"
-                                                onClick={() => handleRemoveMemberFromGroup(member.id)}
-                                            >
-                                                <img src="/images/error.png" alt="Xóa" />
-                                            </button>
-                                        </span>
-                                    ))}
-                                </div>
-                                
-                                <div className="add-member-popup-container">
-                                    <button 
-                                        type="button" 
-                                        className="add-member-btn-group"
-                                        onClick={() => setIsSearchOpen(true)}
-                                    >
-                                        + Add
-                                    </button>
-
-                                    {/* Popup Tìm kiếm (Hiển thị có điều kiện) */}
-                                    {isSearchOpen && (
-                                        <MemberSearchPopup 
-                                            mockStaffList={mockStaffList}
-                                            onAddMember={handleAddMemberToGroup}
-                                            onClosePopup={() => setIsSearchOpen(false)}
-                                        />
-                                    )}
-                                </div>
-                            </div>
-
-                             {/* Nút Save/Cancel (Nằm trong form) */}
-                             <div className="form-actions-staff">
-                                <button type="button" className="btn btn-cancel" onClick={onClose}>Cancel</button>
-                                <button type="button" className="btn btn-save" onClick={handleSaveClick}>Save</button>
-                            </div>
-                        </div>
-                    )}
-
+                <div className="am-actions">
+                    <button className="btn-am btn-am-cancel" onClick={onClose}>Hủy</button>
+                    <button className="btn-am btn-invite" onClick={handleInviteClick} disabled={isLoading}>
+                        {isLoading ? 'Đang thêm...' : 'Thêm ngay'}
+                    </button>
                 </div>
             </div>
         </div>
