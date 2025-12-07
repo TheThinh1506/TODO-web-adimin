@@ -96,10 +96,17 @@ const LoginForm = () => {
                     />
                 </div>
                 
-                {/* Hiển thị lỗi */}
-                {error && <p className="error-message">{error}</p>}
+                {/* Hiển thị lỗi */} 
+                <div className="error-container">
+                    {error && <p className="error-message">{error}</p>}
+                </div>
 
-            
+                
+                {/* Nút Đăng nhập */}
+                <button type="submit" className="login-submit-button" disabled={isLoading}>
+                    {isLoading ? 'Loading ...' : 'Sign in'}
+                </button>
+
                 <button type="submit" className="hidden-submit-button" disabled={isLoading} style={{display: 'none'}}>
                     Đăng nhập bằng Enter
                 </button>

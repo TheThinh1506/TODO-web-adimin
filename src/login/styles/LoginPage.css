@@ -144,3 +144,67 @@
 
 }
 
+
+/* Thêm style cho tiêu đề form */
+.form-title {
+    font-size: 28px;
+    font-weight: 500;
+    margin-bottom: 40px;
+    text-align: center;
+    color: #ffffff; /* Đảm bảo màu sắc hiển thị trên nền xanh */
+}
+
+/* báo lôi */
+.error-container {
+    margin-top: 10px;
+    min-height: 24px; /* Đảm bảo không gian cho thông báo lỗi */
+}
+.login-content-wrapper .error-message {
+    color: #da4444 !important;
+    /* Bỏ padding và margin không cần thiết nếu đã có error-container */
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: start;
+}
+
+/* Style cho nút Đăng nhập */
+.login-submit-button {
+    width: 100%;
+    max-width: 150px;
+    height: 40px;
+    margin: 10px auto auto 108px; /* Căn giữa nút và thêm khoảng cách từ trên */
+    
+
+    background-color: #ffffff; /* Nền trắng */
+    color: #000000; /* Chữ màu xanh */
+    border: none;
+    border-radius: 10px;
+
+    font-size: 20px;
+    font-weight: 500;
+    font-family: 'Kanit', sans-serif;
+    
+    /*text-transform: uppercase;*/
+
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+.login-submit-button:hover {
+    background-color: #FFFFFF; /* Đổi màu khi hover */
+}
+
+.login-submit-button:active {
+    transform: scale(0.99);
+}
+
+/* Style khi nút bị vô hiệu hóa (disabled) */
+.login-submit-button:disabled {
+    background-color: #aaaaaa;
+    color: #FFFFFF;
+    cursor: not-allowed;
+    box-shadow: none;
+}
