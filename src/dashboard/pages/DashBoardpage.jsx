@@ -25,81 +25,67 @@ const DashboardPage = () => {
   // 1. GỌI API KHI VÀO TRANG
     useEffect(() => {
         const fetchInitialData = async () => {
+        try {
             const accessToken = localStorage.getItem('accessToken');
-            if (!accessToken) {
-                console.warn("Chưa có Access Token");
-                return;
-            }
-
-            setLoading(true);
-
-            // --- SỬ DỤNG PROMISE.ALLSETTLED (Thay vì Promise.all) ---
-            // Giúp các API chạy độc lập: API nào lỗi thì báo lỗi, API nào 200 thì vẫn lấy được dữ liệu
-            const results = await Promise.allSettled([
-                axios.get(`${API_BASE_URL}/projects/owner`, { headers: { 'Authorization': `Bearer ${accessToken}` } }),
-                axios.get(`${API_BASE_URL}/tasks/user-tasks`, { headers: { 'Authorization': `Bearer ${accessToken}` } }),
-                // Lưu ý: Tôi dùng /workspaces/mine (có 's') theo code bạn gửi
-                axios.get(`${API_BASE_URL}/workspaces/mine`, { headers: { 'Authorization': `Bearer ${accessToken}` } }) 
+            
+           
+            const [projectsResult, workspaceResult] = await Promise.allSettled([
+                axios.get(`${API_BASE_ROOT}/api/projects/owner`, {
+                    headers: { 'Authorization': `Bearer ${accessToken}` }
+                }),
+                
+                
+                axios.get(`${API_BASE_ROOT}/api/workspaces/mine`, {
+                    headers: { 'Authorization': `Bearer ${accessToken}` }
+                })
             ]);
 
-            const [projectsResult, tasksResult, workspaceResult] = results;
+            // --- XỬ LÝ KẾT QUẢ ---
 
-            // --- 1. Xử lý Projects ---
             if (projectsResult.status === 'fulfilled') {
-                setProjectList(projectsResult.value.data || []);
-            } else {
-                console.error("Lỗi API Projects (500):", projectsResult.reason);
-            }
-
-            // --- 2. Xử lý Tasks ---
-            if (tasksResult.status === 'fulfilled') {
-                setAllUserTasks(tasksResult.value.data || []);
-            } else {
-                console.error("Lỗi API Tasks (500):", tasksResult.reason);
-            }
-
-            if (workspaceResult.status === 'fulfilled') {
-                const responseBody = workspaceResult.value.data;
                 
-               
-                console.log(" Dữ liệu Workspace gốc:", responseBody);
+                const data = projectsResult.value.data;
+                if (Array.isArray(data)) {
+                    setProjectList(data);
+                } else if (data && Array.isArray(data.data)) {
+                    setProjectList(data.data);
+                } else {
+                    setProjectList([]); 
+                }
+            } else {
+                console.warn("⚠️ Không lấy được Projects:", projectsResult.reason);
+                setProjectList([]); 
+            }
 
+    
+            if (workspaceResult && workspaceResult.status === 'fulfilled') {
+                const responseBody = workspaceResult.value.data;
                 let finalData = null;
-
-            
+           
                 if (Array.isArray(responseBody)) {
-                    
                     finalData = responseBody.length > 0 ? responseBody[0] : null;
                 } else if (responseBody && responseBody.data) {
-                   
                     finalData = responseBody.data;
                 } else {
-                   
                     finalData = responseBody;
                 }
 
                 if (finalData) {
-                   const wsId = finalData.workspace_id || finalData._id || finalData.id;
+                    const wsId = finalData.workspace_id || finalData._id || finalData.id;
                     setWorkspaceInfo({
-                        name: finalData.name || finalData.title || "My Workspace",
+                        name: finalData.name || "My Workspace",
                         id: wsId || "N/A"
                     });
-                if (wsId) {
-            localStorage.setItem('currentWorkspaceId', wsId);
-            console.log("Đã lưu Workspace ID:", wsId);
-        }
-
-    } else {
-        setWorkspaceInfo({ name: 'Chưa có WS', id: '---' });
-    }
+                    if (wsId) localStorage.setItem('currentWorkspaceId', wsId);
+                }
             } else {
-                
-                console.error("Lỗi API Workspace:", workspaceResult.reason);
-                setWorkspaceInfo({ name: 'Lỗi tải', id: '---' });
+                console.warn(" Không lấy được Workspace.");
             }
 
-            setLoading(false);
-        };
+        } catch (error) {
+            console.error("Lỗi chung fetchInitialData:", error);
+        }
+    };
 
         fetchInitialData();
     }, []);

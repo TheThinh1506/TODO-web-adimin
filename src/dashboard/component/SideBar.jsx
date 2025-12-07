@@ -58,7 +58,9 @@ const Sidebar = () => {
 
     // (Dữ liệu user giả định giữ nguyên)
     const user = { name: 'TheThinh', id: '2352xxxx', avatarUrl: '/images/avatar.jpg' };
-
+    const handleNotificationClick = () => {
+        navigate('/notification');
+    };
     return (
         <div className="sidebar">
 
@@ -115,7 +117,13 @@ const Sidebar = () => {
                         <span className="footer-userid">{user.id}</span>
                     </div>
 
-                    <div className="notification-icon">🔔</div>
+                    <div 
+                        className="notification-icon" 
+                        onClick={handleNotificationClick}   
+                        style={{ cursor: 'pointer' }}       
+                    >
+                        🔔
+                    </div>
                 </div>
                 
                 <div className="sign-out" onClick={handleSignOut}>

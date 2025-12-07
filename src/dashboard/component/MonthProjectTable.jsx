@@ -1,10 +1,7 @@
 import React from 'react';
-// Nếu bạn có file CSS riêng cho table thì import vào đây, ví dụ:
-// import '../style/DashBoard.css';
 
 const MonthProjectTable = ({ projects, onProjectClick }) => {
     
-    // Hàm phụ trợ để map status từ API sang class CSS
     const getStatusClass = (status) => {
         if (!status) return '';
         const s = status.toLowerCase();
@@ -24,24 +21,17 @@ const MonthProjectTable = ({ projects, onProjectClick }) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {/* SỬA LỖI: Kiểm tra !projects trước để tránh crash nếu API chưa trả về dữ liệu */}
-                    {!projects || projects.length === 0 ? (
-                        <tr>
-                            <td colSpan="3" style={{ textAlign: 'center', padding: '20px' }}>
-                                No projects found
-                            </td>
-                        </tr>
-                    ) : (
+                    {Array.isArray(projects) && projects.length > 0 ? (
                         projects.map((project, index) => (
                             <tr 
                                 key={project._id || index} 
                                 onClick={() => onProjectClick && onProjectClick(project)} 
                                 className="clickable-row"
-                                style={{ cursor: 'pointer' }} // Thêm style này để người dùng biết click được
+                                style={{ cursor: 'pointer' }} 
                             >
                                 <td>{project.name}</td>
                                 
-                                {/* Owner: Hiển thị tạm 'Me' nếu có ID */}
+                                {/* Owner: Hiển thị tạm */}
                                 <td>{project.ownerId ? 'Me' : '...'}</td> 
                                 
                                 <td>
@@ -51,6 +41,13 @@ const MonthProjectTable = ({ projects, onProjectClick }) => {
                                 </td>
                             </tr>
                         ))
+                    ) : (
+                        /* Trường hợp projects là null, undefined, object lỗi, hoặc mảng rỗng */
+                        <tr>
+                            <td colSpan="3" style={{ textAlign: 'center', padding: '20px', color: '#888' }}>
+                                No projects found
+                            </td>
+                        </tr>
                     )}
                 </tbody>
             </table>

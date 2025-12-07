@@ -56,6 +56,19 @@
     font-size: 16px; 
     padding: 12px 20px;
     cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 6px rgba(66, 159, 251, 0.15); 
+}
+
+.add-new-button:hover {
+    background-color: #318CE7; 
+    transform: translateY(-1px);
+    box-shadow: 0 6px 15px rgba(66, 159, 251, 0.3); 
+}
+
+.add-new-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(66, 159, 251, 0.2);
 }
 
 /* Bố cục 2 cột (Danh sách và Chi tiết) */
@@ -305,7 +318,7 @@
     border-radius: 8px;
     z-index: 10;
     padding: 5px;
-    width: 150px; /* Độ rộng của dropdown */
+    width: 150px; 
 }
 .kebab-dropdown button {
     display: block;
@@ -338,4 +351,39 @@
 .member-list .staff-item {
     border-bottom: none; 
     padding: 5px;
+}
+
+/* Style cho nút Thêm Nhóm  */
+.add-group-bottom-btn {
+   width: fit-content;
+    padding: 12px 20px;
+    font-size: 16px;
+    border-radius: 15px;
+
+    margin: 15px auto 0 auto; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    
+    background-color: #429FFB; 
+    color: #FFFFFF; 
+    border: none;
+    
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 6px rgba(66, 159, 251, 0.15);
+}
+
+.add-group-bottom-btn:hover {
+    background-color: #318CE7; 
+    transform: translateY(-1px); 
+    box-shadow: 0 6px 15px rgba(66, 159, 251, 0.3);
+}
+
+.add-group-bottom-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 5px rgba(66, 159, 251, 0.2);
 }

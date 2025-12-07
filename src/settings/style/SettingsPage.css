@@ -223,3 +223,73 @@
 .save-btn:hover {
     background: #4070cc;
 }
+
+.linked-accounts-section {
+    margin-top: 20px;
+    margin-bottom: 30px;
+    text-align: left;
+}
+
+.section-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #888;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Nút Connect GitHub */
+.github-connect-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: #24292e; /* Màu đen GitHub */
+    color: #ffffff;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 100%; /* Hoặc để width: auto nếu muốn nút nhỏ */
+    justify-content: center;
+}
+
+.github-connect-btn:hover {
+    background-color: #333;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Trạng thái đã kết nối */
+.connected-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: #e6fffa;
+    border: 1px solid #b2f5ea;
+    color: #2c7a7b;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.unlink-btn {
+    margin-left: auto; /* Đẩy nút unlink sang phải cùng */
+    background: transparent;
+    border: 1px solid #e53e3e;
+    color: #e53e3e;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.unlink-btn:hover {
+    background-color: #fff5f5;
+}

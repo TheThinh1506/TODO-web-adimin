@@ -1,303 +1,299 @@
-// src/staff/pages/StaffPage.jsx
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import Sidebar from '../../dashboard/component/SideBar';
 import StaffList from '../components/StaffList';
 import StaffDetails from '../components/StaffDetails';
 import GroupList from '../components/GroupList'; 
-import AddNewModal from '../components/AddNewModal';
+import AddNewModal from '../components/AddNewModal'; 
+import AddGroupModal from '../components/AddGroupModal'; 
+import AddGroupMemberModal from '../components/AddGroupMemberModal';
 import '../../dashboard/style/DashBoard.css'; 
 import '../style/StaffPage.css'; 
 
-// **ĐIỂM KẾT NỐI API QUAN TRỌNG:**
-const API_BASE_ROOT = 'http://163.61.110.132:4000'; 
-const API_GROUP_URL = `${API_BASE_ROOT}/api/groups`;
-
-// Dữ liệu giả định (Mock Data) - Nhân viên
-const mockStaffList = [
-    { id: 1, 
-      name: 'Trần Nguyễn Lê Cao', 
-      email: 'cao@gmail.com', 
-      avatar: '/images/avatar.jpg', 
-      phone: '0123456789', 
-      birthday: '11/11/1999', 
-      gender: 'Nam', 
-      address: '120 Yên Lãng' },
-    { id: 2, 
-      name: 'Tạ Lệ', 
-      email: 'le@gmail.com', 
-      avatar: '/images/avatar.jpg', 
-      phone: '0987654321',
-      birthday: '12/12/2000', 
-      gender: 'Nữ', 
-      address: '121 Yên Lãng' },
-    { id: 3, 
-      name: 'Smith', 
-      email: 'smith@gmail.com', 
-      avatar: '/images/avatar.jpg', 
-      phone: '0123412345', 
-      birthday: '10/10/2000', 
-      gender: 'Nam', 
-      address: '122 Yên Lãng' },
-    { 
-      id: 4, 
-      name: 'Võ Tấn Tài', 
-      email: 'tai.nv@gmail.com', 
-      avatar: '/images/avatar.jpg', 
-      phone: '0905123456', 
-      birthday: '01/05/2005', 
-      gender: 'Nam', 
-      address: 'Quận 1, TP. HCM' 
-    },
-    { 
-      id: 5, 
-      name: 'Nguyễn Tấn An', 
-      email: 'anhnguyen9854321  @gmail.com', 
-      avatar: '/images/avatar.jpg', 
-      phone: '0912345678', 
-      birthday: '20/09/2005', 
-      gender: 'Nữ', 
-      address: 'Quận 3, TP. HCM' 
-    },
-    { 
-      id: 6, 
-      name: 'Nguyễn Thái An', 
-      email: 'thai.an@gmail.com', 
-      avatar: '/images/avatar.jpg', 
-      phone: '0909090909', 
-      birthday: '08/05/2005', 
-      gender: 'Nam', 
-      address: 'Quận 10, TP. HCM' 
-    },
-    { 
-      id: 7, 
-      name: 'Nguyễn Thế Thịnh', 
-      email: 'thinh.huynh@gmail.com', 
-      avatar: '/images/avatar.jpg', 
-      phone: '0888123123', 
-      birthday: '28/11/2005', 
-      gender: 'Nam', 
-      address: 'Quận 5, TP. HCM' 
-    }
-];
-
-// 2. DỮ LIỆU GIẢ ĐỊNH CHO NHÓM (Dựa trên mockStaffList)
-const mockGroupList = [
-    { 
-        id: 1, 
-        name: 'Group 1 - Dev',
-        members: [ mockStaffList[0], mockStaffList[1], mockStaffList[5] ] 
-    },
-    {
-        id: 2,
-        name: 'Group 2 - IT Support',
-        members: [ mockStaffList[2], mockStaffList[3], mockStaffList[4], mockStaffList[6] ] 
-    }
-];
-
+const API_BASE_ROOT = 'http://34.124.178.44:4000'; 
+const API_GROUP_URL = `${API_BASE_ROOT}/api/groups`; 
 
 const StaffPage = () => {
-    
-   
     const [activeTab, setActiveTab] = useState('Nhân viên');
-
     const [staffList, setStaffList] = useState([]);
     const [groupList, setGroupList] = useState([]);
     const [selectedStaff, setSelectedStaff] = useState(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-
-    // Hàm gọi API để lấy danh sách nhân viên
-    useEffect(() => {
-        // **ĐIỂM KẾT NỐI API BACKEND (GET /api/users và GET /api/groups):**
-        // Bạn cần gọi 2 API: 
-        // 1. Lấy tất cả nhân viên (cho tab 'Nhân viên')
-        // 2. Lấy tất cả nhóm và thành viên trong nhóm (cho tab 'Nhóm')
-        
-        // Dùng Mock Data
-        setStaffList(mockStaffList);
-        setGroupList(mockGroupList); 
-      //  setSelectedStaff(mockStaffList[0]); 
-        
-    }, []); // Chạy 1 lần
-
-    // Hàm xử lý khi click xóa nhân viên
-    const handleDeleteStaff = (staffId) => {
-        // **ĐIỂM KẾT NỐI API BACKEND (DELETE /api/users/{staffId}):**
-        alert(`Đang xóa nhân viên ID: ${staffId} (Chưa gọi API)`);
+    const [targetGroupId, setTargetGroupId] = useState(null);
     
-    };
+    // Modal states
+    const [isAddMemberModalOpen, setIsAddMemberModalOpen] = useState(false);
+    const [isStaffModalOpen, setIsStaffModalOpen] = useState(false);
+    const [isGroupModalOpen, setIsGroupModalOpen] = useState(false); 
 
-    // 3. HÀM MỚI (XỬ LÝ NHÓM)
-    const handleDeleteGroup = async (groupId) => {
-        if (!window.confirm(`Bạn có chắc chắn muốn xóa nhóm (ID: ${groupId})?`)) {
+    // --- 1. HÀM GỌI API LẤY DỮ LIỆU (THAY THẾ MOCK DATA) ---
+    const fetchWorkspaceData = useCallback(async () => {
+        const accessToken = localStorage.getItem('accessToken');
+        const workspaceId = localStorage.getItem('currentWorkspaceId');
+
+        if (!accessToken) return;
+        
+        if (!workspaceId) {
+            console.warn("Chưa chọn Workspace, không thể tải dữ liệu.");
+            return;
+        }
+
+        try {
+            console.log(` Đang tải dữ liệu cho Workspace ID: ${workspaceId}...`);
+
+            const [membersRes, groupsRes] = await Promise.allSettled([
+                
+                axios.get(`${API_BASE_ROOT}/api/workspaces/${workspaceId}/list`, {
+                    headers: { 'Authorization': `Bearer ${accessToken}` }
+                }),
+                
+               
+                axios.get(`${API_BASE_ROOT}/api/workspaces/${workspaceId}/groups`, {
+                    headers: { 'Authorization': `Bearer ${accessToken}` }
+                })
+            ]);
+
+            // --- XỬ LÝ KẾT QUẢ MEMBERS ---
+            if (membersRes.status === 'fulfilled') {
+                const rawMembers = membersRes.value.data.data || membersRes.value.data || [];
+                
+                console.log("🔍 DATA GỐC TỪ SERVER:", rawMembers); 
+
+               
+                const mappedStaff = rawMembers.map(item => {
+                    const userInfo = item.User || item.user || item; 
+
+                    return {
+                    
+                        id: userInfo.user_id || userInfo.id || userInfo._id,
+                        
+                       
+                        name: userInfo.full_name || userInfo.name || userInfo.username || "No Name",
+                        email: userInfo.email || "N/A",
+                        
+                        role: item.role || userInfo.role || 'Member',
+                        
+                        avatar: userInfo.avatar_url || userInfo.avatar || '/images/avatar.jpg',
+                        phone: userInfo.phone_number || userInfo.phone || 'N/A',
+                        address: userInfo.address || 'N/A',
+                        
+                        // Các trường khác nếu có
+                        gender: userInfo.gender || 'N/A',
+                        birthday: userInfo.birthday ? new Date(userInfo.birthday).toLocaleDateString('vi-VN') : 'N/A'
+                    };
+                });
+
+                setStaffList(mappedStaff);
+                console.log("✅ Danh sách nhân viên sau khi Map:", mappedStaff);
+            }
+
+            // --- XỬ LÝ KẾT QUẢ GROUPS ---
+            if (groupsRes.status === 'fulfilled') {
+                const rawGroups = groupsRes.value.data.data || groupsRes.value.data || [];
+                // Map dữ liệu cho khớp UI
+                const mappedGroups = rawGroups.map(g => ({
+                    id: g.group_id || g.id || g._id,
+                    name: g.group_name || g.name,
+                    description: g.description,
+                    members: g.members || []
+                }));
+                setGroupList(mappedGroups);
+                console.log(" Đã tải danh sách nhóm:", mappedGroups);
+            } else {
+                console.error(" Lỗi tải Groups:", groupsRes.reason);
+            }
+
+        } catch (error) {
+            console.error("Lỗi chung khi tải dữ liệu Workspace:", error);
+        }
+    }, []);
+
+    useEffect(() => {
+        fetchWorkspaceData();
+    }, [fetchWorkspaceData]);
+
+
+    const handleDeleteStaff = (staffId) => { alert("Chức năng xóa nhân viên đang phát triển"); };
+
+
+   const handleDeleteGroup = async (groupId) => {
+        if (!window.confirm("⚠️ Bạn có chắc chắn muốn xóa nhóm này không? Các thành viên trong nhóm sẽ bị gỡ bỏ khỏi nhóm.")) {
             return;
         }
 
         try {
             const accessToken = localStorage.getItem('accessToken');
-            await axios.delete(`${API_GROUP_URL}/${groupId}`, {
+            
+            await axios.delete(`${API_BASE_ROOT}/api/groups/${groupId}`, {
                 headers: { 'Authorization': `Bearer ${accessToken}` }
             });
 
             alert("Đã xóa nhóm thành công!");
-            setGroupList(prevGroups => prevGroups.filter(g => g.id !== groupId));
+
+            
+            setGroupList(prevGroups => prevGroups.filter(g => (g.group_id || g.id) !== groupId));
 
         } catch (error) {
-            console.error("Lỗi khi xóa nhóm:", error);
-            alert("Lỗi: " + (error.response?.data?.message || "Không thể xóa nhóm."));
+            console.error("Lỗi xóa nhóm:", error);
+            const msg = error.response?.data?.message || "Lỗi Server.";
+            alert(`Không thể xóa: ${msg}`);
         }
     };
     
     const handleAddMember = (groupId) => {
-        // **ĐIỂM KẾT NỐI API BACKEND (POST /add-member):**
-        alert(`Mở Modal thêm thành viên vào nhóm ID: ${groupId} (Chưa code)`);
+        setTargetGroupId(groupId);     
+        setIsAddMemberModalOpen(true); 
     };
 
-    // Hàm xử lý khi click "Thêm mới"
-    const handleAddNew = () => {
-       setIsModalOpen(true);
-    };
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
-    };
-const handleSaveData = async (data, type) => {
-        
-        if (type === 'Nhân viên') {
-            /*******************************************************
-             * *  ĐIỂM KẾT NỐI API (CẦN BỔ SUNG)
-             * GỌI API: POST /api/admin/create-user (Hoặc /auth/sign-up?)
-             * MỤC ĐÍCH: Admin tạo tài khoản nhân viên mới.
-             * *******************************************************/
-            console.log("Đang lưu nhân viên mới:", data);
-
-        } else if (type === 'Nhóm') {
+    // --- HÀM TẠO NHÓM MỚI (Đã sửa ở bước trước) ---
+    const handleSaveNewGroup = async (groupNameInput) => {
+        try {
+            const accessToken = localStorage.getItem('accessToken');
+            const storedUser = localStorage.getItem('user');
+            const currentWorkspaceId = localStorage.getItem('currentWorkspaceId');
             
-            try {
-                const accessToken = localStorage.getItem('accessToken');
-                
-                const groupBody = {
-                    group_name: data.tenNhom,
-                    description: "Mô tả mặc định"
-                };
-                
-                const groupResponse = await axios.post(
-                    `${API_GROUP_URL}/create`, 
-                    groupBody,
-                    { headers: { 'Authorization': `Bearer ${accessToken}` } }
-                );
-                
-               const newGroup = groupResponse.data.group;
-                console.log("Đã tạo nhóm ID:", newGroup.group_id);
-
-            
-                setGroupList(prevGroupList => [
-                    ...prevGroupList, 
-                    newGroup          
-                ]);
-
-              for (const member of data.members) {
-                    await axios.post(
-                        `${API_GROUP_URL}/add-member`,
-                        { group_id: newGroup.group_id, member_email: member.email },
-                        { headers: { 'Authorization': `Bearer ${accessToken}` } }
-                    );
-                }
-                
-                alert("Tạo nhóm và thêm thành viên thành công!");
-
-            } catch (error) {
-                 console.error("Lỗi khi tạo nhóm:", error);
-                 alert("Lỗi: " + (error.response?.data?.message || "Không thể tạo nhóm."));
+            let realOwnerId = null;
+            if (storedUser) {
+                const parsed = JSON.parse(storedUser);
+                realOwnerId = parsed.user_id || parsed.id || parsed._id;
             }
+
+            if (!realOwnerId || !currentWorkspaceId) {
+                alert("Lỗi: Thiếu thông tin User hoặc Workspace!");
+                return;
+            }
+            
+            // Gửi đủ các trường ID để "rải thảm" tránh lỗi Backend
+            const groupBody = {
+                group_name: groupNameInput,      
+                description: "Mô tả nhóm mới",  
+                owner_id: realOwnerId,
+                user_id: realOwnerId,        
+                workspace_id: currentWorkspaceId 
+            };
+            
+            const response = await axios.post(
+                `${API_GROUP_URL}/create`, 
+                groupBody,
+                { headers: { 'Authorization': `Bearer ${accessToken}` } }
+            );
+            
+            if (response.status === 200 || response.status === 201) {
+                alert(" Tạo nhóm thành công!");
+                // Gọi lại API để cập nhật danh sách thật
+                fetchWorkspaceData(); 
+                setIsGroupModalOpen(false); 
+            }
+
+        } catch (error) {
+            console.error("Lỗi tạo nhóm:", error);
+            const msg = error.response?.data?.message || "Lỗi Server.";
+            alert(`Lỗi: ${msg}`); 
         }
-        
-        setIsModalOpen(false); 
     };
+   
     return (
         <div className="dashboard-container">
             <Sidebar /> 
 
             <div className="main-content">
                 <header className="page-header">
-                    <h1>Staff</h1>
+                    <h1>Staff Management</h1>
                 </header>
 
-                {/* Khung trắng chính chứa nội dung trang Staff */}
                 <div className="staff-page-wrapper">
                     
-                    {/* Header của khung (Tabs và Nút Thêm mới) */}
+                    {/* STAFF HEADER */}
                     <div className="staff-header">
                         <div className="tabs">
                             <button 
                                 className={`tab-btn ${activeTab === 'Nhân viên' ? 'active' : ''}`}
-                                
                                 onClick={() => setActiveTab('Nhân viên')}
                             >
                                 Nhân viên
                             </button>
                             <button 
                                 className={`tab-btn ${activeTab === 'Nhóm' ? 'active' : ''}`}
-                               
                                 onClick={() => setActiveTab('Nhóm')}
                             >
                                 Nhóm
                             </button>
                         </div>
-                        <button className="add-new-button" onClick={handleAddNew}>
-                            + Thêm mới
-                        </button>
+
+                        {activeTab === 'Nhân viên' && (
+                            <button className="add-new-button" onClick={() => setIsStaffModalOpen(true)}>
+                                + Thêm nhân viên
+                            </button>
+                        )}
                     </div>
 
-                    {/* Nội dung (chia 2 cột: Danh sách và Chi tiết) */}
                     <div className="staff-content-grid">
-                        
-                        {/* CỘT TRÁI: DANH SÁCH (Nhân viên hoặc Nhóm) */}
+                        {/* CỘT TRÁI: DANH SÁCH */}
                         <div className="staff-list-column">
-                            {/* Thanh tìm kiếm */}
                             <div className="list-search-bar">
-                              
                                 <input type="text" placeholder="Tìm kiếm..." />
                             </div>
                             
                             {activeTab === 'Nhân viên' ? (
                                 <StaffList 
                                     staffList={staffList} 
-                                    selectedStaffId={selectedStaff ? selectedStaff.id : null}
-                                    onSelectStaff={setSelectedStaff} // Hàm callback khi click
-                                    onDeleteStaff={handleDeleteStaff} // Hàm callback khi xóa
-                                />
-                            ) : (
-                                <GroupList
-                                    groups={groupList}
-                                    selectedStaffId={selectedStaff ? selectedStaff.id : null}
+                                    selectedStaffId={selectedStaff?.id}
                                     onSelectStaff={setSelectedStaff}
                                     onDeleteStaff={handleDeleteStaff}
-                                    onDeleteGroup={handleDeleteGroup}
-                                    onAddMember={handleAddMember}
                                 />
+                            ) : (
+                                <>
+                                    <GroupList
+                                        groups={groupList}
+                                        selectedStaffId={selectedStaff?.id}
+                                        onSelectStaff={setSelectedStaff}
+                                        onDeleteStaff={handleDeleteStaff}
+                                        onDeleteGroup={handleDeleteGroup}
+                                        onAddMember={handleAddMember}
+                                    />
+                                    <button 
+                                        className="add-group-bottom-btn" 
+                                        onClick={() => setIsGroupModalOpen(true)}
+                                    >
+                                        + Thêm nhóm
+                                    </button>
+                                </>
                             )}
                         </div>
 
                         {/* CỘT PHẢI: CHI TIẾT */}
                         <div className="staff-details-column">
-                            {/* Luôn hiển thị chi tiết nhân viên được chọn */}
                             {selectedStaff ? (
                                 <StaffDetails staff={selectedStaff} />
                             ) : (
-                                <div className="placeholder-tab">Chọn một nhân viên để xem chi tiết.</div>
+                                <div className="placeholder-tab">
+                                    <p>Chọn một nhân viên để xem chi tiết.</p>
+                                </div>
                             )}
                         </div>
-                        
                     </div>
                 </div>
             </div>
-            {isModalOpen && (
+
+            {/* MODALS */}
+            {isStaffModalOpen && (
                 <AddNewModal 
-                    onClose={handleCloseModal} 
-                    onSave={handleSaveData}
-                    // Truyền danh sách nhân viên xuống để Tab Nhóm có thể tìm kiếm
-                    mockStaffList={staffList} 
+                    onClose={() => setIsStaffModalOpen(false)} 
+                    onInviteSuccess={fetchWorkspaceData} // Reload lại list sau khi thêm
+                />
+            )}
+
+            {isGroupModalOpen && (
+                <AddGroupModal 
+                    onClose={() => setIsGroupModalOpen(false)}
+                    onSave={handleSaveNewGroup}
+                />
+            )}
+            
+            {isAddMemberModalOpen && (
+                <AddGroupMemberModal 
+                    onClose={() => setIsAddMemberModalOpen(false)}
+                    groupId={targetGroupId} 
+                    existingStaffList={staffList}
                 />
             )}
         </div>
