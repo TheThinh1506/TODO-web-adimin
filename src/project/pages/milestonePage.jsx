@@ -8,7 +8,7 @@ import '../style/MilestoneStyles.css';
 const API_BASE_ROOT = 'http://34.124.178.44:4000'; 
 
 const MilestonePage = () => {
-  const { id } = useParams(); // ID Project
+  const { id } = useParams();
   const location = useLocation();
   const projectTitle = location.state?.projectName || "Project Milestones";
 
@@ -16,19 +16,21 @@ const MilestonePage = () => {
   const [milestones, setMilestones] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // --- 1. GỌI API LẤY DANH SÁCH (Bao gồm cả Task con từ Mobile) ---
+  // --- 1. GỌI API LẤY DANH SÁCH ---
   const fetchMilestones = useCallback(async () => {
     if (!id) return;
     const accessToken = localStorage.getItem('accessToken');
     setIsLoading(true);
     try {
-      // API này cần trả về cấu trúc: { ..., start_date, end_date, tasks: [...] }
+      // API: GET /api/milestones/project/:project_id
       const response = await axios.get(`${API_BASE_ROOT}/api/milestones/project/${id}`, {
         headers: { 'Authorization': `Bearer ${accessToken}` }
       });
+
       const data = response.data.data || response.data || [];
-      console.log("Dữ liệu Milestone (Admin tạo khung + Mobile tạo task):", data);
+      console.log("Dữ liệu Milestone tải về:", data);
       setMilestones(data);
+      
     } catch (error) {
       console.error("Lỗi tải Milestone:", error);
     } finally {
@@ -40,26 +42,26 @@ const MilestonePage = () => {
     fetchMilestones();
   }, [fetchMilestones]);
 
+
   // --- 2. TÍNH TOÁN DẢI THỜI GIAN HIỂN THỊ (DAILY VIEW) ---
- const timelineRange = useMemo(() => {
+  const timelineRange = useMemo(() => {
+    // 1. Lọc dữ liệu hợp lệ (tránh lỗi NaN khi tạo Date)
     const validMilestones = milestones.filter(m => 
-        m.start_date && 
-        m.end_date && 
+        m.start_date && m.end_date && 
         !isNaN(new Date(m.start_date).getTime()) && 
         !isNaN(new Date(m.end_date).getTime())
     );
 
-    // 2. Nếu không có dữ liệu hoặc toàn bộ dữ liệu bị lỗi ngày -> Hiển thị mặc định 30 ngày tới
+    // 2. Nếu không có dữ liệu hợp lệ: Hiển thị mặc định 30 ngày
     if (validMilestones.length === 0) {
       const start = new Date();
       start.setHours(0, 0, 0, 0);
-      
       const end = new Date(start);
       end.setDate(end.getDate() + 30);
-      
       return { start, end, totalDays: 31 };
     }
 
+    // 3. Tìm Min/Max
     let minDate = new Date(validMilestones[0].start_date);
     let maxDate = new Date(validMilestones[0].end_date);
 
@@ -70,37 +72,36 @@ const MilestonePage = () => {
       if (e > maxDate) maxDate = e;
     });
 
+    // Thêm padding 2 ngày trước và 5 ngày sau
     minDate.setDate(minDate.getDate() - 2);
     maxDate.setDate(maxDate.getDate() + 5);
 
-  
     const diffTime = Math.abs(maxDate - minDate);
     const totalDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
 
-   
     if (isNaN(totalDays) || totalDays <= 0) {
         return { start: new Date(), end: new Date(), totalDays: 30 };
     }
-
     return { start: minDate, end: maxDate, totalDays };
   }, [milestones]);
 
   const dateHeaders = useMemo(() => {
     const dates = [];
-    for (let i = 0; i < timelineRange.totalDays; i++) {
-      const d = new Date(timelineRange.start);
-      d.setDate(d.getDate() + i);
-      dates.push(new Date(d));
+    if (timelineRange.totalDays > 0) {
+        for (let i = 0; i < timelineRange.totalDays; i++) {
+            const d = new Date(timelineRange.start);
+            d.setDate(d.getDate() + i);
+            dates.push(new Date(d));
+        }
     }
     return dates;
   }, [timelineRange]);
 
-  // --- 3. LOGIC QUAN TRỌNG: VẼ KHUNG THỜI GIAN (ADMIN QUY ĐỊNH) ---
+  // --- 3. LOGIC TÍNH VỊ TRÍ THANH BAR (CSS GRID) ---
   const getGridStyle = (startDateStr, endDateStr) => {
     const start = new Date(startDateStr);
     const end = new Date(endDateStr);
     
-    // Tính toán Milestone này nằm ở ô số mấy trên lưới ngày
     const diffStart = Math.ceil((start - timelineRange.start) / (1000 * 60 * 60 * 24));
     const duration = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
 
@@ -110,13 +111,10 @@ const MilestonePage = () => {
     };
   };
 
-  // --- 4. LOGIC QUAN TRỌNG: TÍNH TIẾN ĐỘ (DỰA VÀO TASK TỪ MOBILE) ---
+  // --- 4. LOGIC TÍNH TIẾN ĐỘ (DỰA VÀO TASK TỪ MOBILE) ---
   const calculateProgress = (milestone) => {
-    // Nếu chưa có task nào (Mới tạo) -> 0%
     const tasks = milestone.tasks || [];
     if (tasks.length === 0) return 0;
-
-    // Nếu có task -> Tính % hoàn thành
     const completed = tasks.filter(t => t.status === 'done' || t.status === 'completed').length;
     return Math.round((completed / tasks.length) * 100);
   };
@@ -126,7 +124,7 @@ const MilestonePage = () => {
     width: 'max-content'
   };
 
-  // --- LOGIC HISTORY (CHỈ HIỆN CÁI ĐÃ XONG 100%) ---
+  // --- LOGIC HISTORY ---
   const completedHistory = useMemo(() => {
     return milestones
         .filter(ms => calculateProgress(ms) === 100)
@@ -141,13 +139,13 @@ const MilestonePage = () => {
         }));
   }, [milestones]);
 
+
   return (
     <div className="project-layout">
       <Sidebar />
 
       <div className="project-main-content">
         
-        {/* HEADER */}
         <div className="project-header">
           <h1 className="page-title">{projectTitle}</h1>
           <button className="btn-add" onClick={() => setIsModalOpen(true)}>+ Add Milestone</button>
@@ -181,10 +179,8 @@ const MilestonePage = () => {
 
               {/* TRẠNG THÁI RỖNG */}
               {!isLoading && milestones.length === 0 && (
-                 <div className="empty-state-lines">
-                    <div style={{padding: '40px', textAlign: 'center', color: '#999'}}>
-                        Chưa có Milestone nào. Admin hãy tạo Milestone để lên kế hoạch!
-                    </div>
+                 <div className="empty-state">
+                    Chưa có Milestone nào. Admin hãy tạo Milestone để lên kế hoạch!
                  </div>
               )}
 
@@ -195,34 +191,29 @@ const MilestonePage = () => {
                 
                 return (
                   <div key={uniqueKey} className="timeline-row" style={{width: 'fit-content'}}>
-                     {/* 1. CỘT TÊN MILESTONE (CẬP NHẬT SAU KHI TẠO) */}
                      <div className="row-task-area">
-                       {/* Chỉ tick xanh khi đã xong 100% */}
                        <input type="checkbox" className="custom-checkbox" checked={progress === 100} readOnly/>
                        <span title={ms.name}>{ms.name}</span>
                      </div>
 
-                     {/* 2. KHU VỰC HIỂN THỊ TASK (THEO Ý BẠN LÀ KHUNG THỜI GIAN) */}
                      <div className="row-days-area" style={gridTemplateStyle}>
-                        {/* Lưới nền */}
                         <div className="grid-background-days" style={gridTemplateStyle}>
                           {[...Array(timelineRange.totalDays)].map((_, i) => <div key={i} className="grid-col-day"></div>)}
                         </div>
 
-                        {/* THANH XÁM (SCOPE): Luôn hiển thị dựa trên Start-End Date Admin nhập */}
+                        {/* Thanh Bar (SCOPE: Vị trí được Admin định nghĩa) */}
                         <div 
                           className="milestone-bar" 
                           style={getGridStyle(ms.start_date, ms.end_date)}
                           title={`${ms.name} (Plan: ${new Date(ms.start_date).toLocaleDateString()} - ${new Date(ms.end_date).toLocaleDateString()})`}
                         >
-                          {/* THANH MÀU (PROGRESS): Chỉ hiện khi Mobile user làm xong Task */}
+                          {/* Thanh Màu Xanh (PROGRESS: Phụ thuộc vào Task Mobile) */}
                           <div 
                             className="progress-fill" 
                             style={{ 
                                 width: `${progress}%`, 
-                                // Nếu chưa có task (0%) -> Ẩn màu xanh đi
                                 opacity: progress > 0 ? 1 : 0, 
-                                backgroundColor: progress === 100 ? '#27AE60' : '#429FFB' 
+                                backgroundColor: progress === 100 ? '#27AE60' : '#429FFB',
                             }}
                           ></div>
                           
@@ -232,9 +223,8 @@ const MilestonePage = () => {
                                 {progress}%
                               </span>
                           )}
-                          {/* Nếu chưa có task, có thể hiện chữ "Planned" hoặc để trống cho sạch */}
                           {progress === 0 && (
-                              <span style={{fontSize:'10px', color:'#888', position:'absolute', left:'5px', top:'50%', transform:'translateY(-50%)'}}>
+                              <span style={{fontSize:'10px', color:'#888', position:'absolute', left:'5px', transform:'translateY(-50%)'}}>
                                 
                               </span>
                           )}

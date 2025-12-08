@@ -4,7 +4,7 @@ import '../style/AddGroupMemberModal.css';
 
 const API_BASE_ROOT = 'http://34.124.178.44:4000'; 
 
-const AddGroupMemberModal = ({ onClose, groupId, existingStaffList }) => {
+const AddGroupMemberModal = ({ onClose, groupId, existingStaffList,onAddSuccess }) => {
     
     const [inviteCode, setInviteCode] = useState(`GROUP-${groupId}-${Math.floor(Math.random()*1000)}`); 
     const [emailInput, setEmailInput] = useState('');
@@ -70,21 +70,27 @@ const AddGroupMemberModal = ({ onClose, groupId, existingStaffList }) => {
         try {
             const accessToken = localStorage.getItem('accessToken');
 
-            const promises = invitedList.map(user => {
+          const promises = invitedList.map(user => {
+                const payload = {
+                    group_id: groupId,       
+                    member_email: user.email, 
+                    role: user.role || 'Member'
+                };
+                
                 return axios.post(
                     `${API_BASE_ROOT}/api/groups/add-member`,
-                    {
-                        group_id: groupId,
-                        member_email: user.email,
-                        role: user.role 
-                    },
-                    { headers: { 'Authorization': `Bearer ${accessToken}` } }
+                    payload,
+                    { headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` } }
                 );
             });
 
             await Promise.all(promises);
+            
+           
+            if (onAddSuccess) {
+                onAddSuccess(); 
+            }
 
-            alert(" Đã thêm thành viên vào nhóm thành công!");
             onClose(); 
 
         } catch (error) {
@@ -156,7 +162,8 @@ const AddGroupMemberModal = ({ onClose, groupId, existingStaffList }) => {
                                                     onChange={(e) => handleRoleChange(user.email, e.target.value)}
                                                 >
                                                     <option value="Member">Member</option>
-                                                    <option value="Leader">Leader</option>
+                                                    <option value="Leader">Manager</option>
+                                                    <option value="Leader">Viewer</option>
                                                 </select>
                                             </td>
                                             <td style={{padding: '10px', textAlign: 'center'}}>
