@@ -387,3 +387,30 @@
     transform: translateY(0);
     box-shadow: 0 2px 5px rgba(66, 159, 251, 0.2);
 }
+
+.staff-text-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px; 
+    flex-grow: 1;
+}
+
+.staff-name {
+    
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+}
+
+.staff-email {
+    font-size: 11px; 
+    font-weight: 400;
+    color: #888;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.kebab-dropdown {
+    z-index: 100; 
+}

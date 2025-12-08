@@ -16,94 +16,122 @@ const API_GROUP_URL = `${API_BASE_ROOT}/api/groups`;
 const StaffPage = () => {
     const [activeTab, setActiveTab] = useState('Nhân viên');
     const [staffList, setStaffList] = useState([]);
-    const [groupList, setGroupList] = useState([]);
+    const [groups, setGroups] = useState([]);
     const [selectedStaff, setSelectedStaff] = useState(null);
     const [targetGroupId, setTargetGroupId] = useState(null);
     
-    // Modal states
+  
     const [isAddMemberModalOpen, setIsAddMemberModalOpen] = useState(false);
     const [isStaffModalOpen, setIsStaffModalOpen] = useState(false);
     const [isGroupModalOpen, setIsGroupModalOpen] = useState(false); 
 
-    // --- 1. HÀM GỌI API LẤY DỮ LIỆU (THAY THẾ MOCK DATA) ---
     const fetchWorkspaceData = useCallback(async () => {
         const accessToken = localStorage.getItem('accessToken');
         const workspaceId = localStorage.getItem('currentWorkspaceId');
 
-        if (!accessToken) return;
-        
-        if (!workspaceId) {
-            console.warn("Chưa chọn Workspace, không thể tải dữ liệu.");
-            return;
-        }
+        if (!accessToken || !workspaceId) return;
 
         try {
-            console.log(` Đang tải dữ liệu cho Workspace ID: ${workspaceId}...`);
+            console.log("🚀 BẮT ĐẦU TẢI DỮ LIỆU...");
 
+            // 1. Lấy danh sách Staff & Danh sách Nhóm sơ bộ
             const [membersRes, groupsRes] = await Promise.allSettled([
-                
-                axios.get(`${API_BASE_ROOT}/api/workspaces/${workspaceId}/list`, {
-                    headers: { 'Authorization': `Bearer ${accessToken}` }
-                }),
-                
-               
-                axios.get(`${API_BASE_ROOT}/api/workspaces/${workspaceId}/groups`, {
-                    headers: { 'Authorization': `Bearer ${accessToken}` }
-                })
+                axios.get(`${API_BASE_ROOT}/api/workspaces/${workspaceId}/list`, { headers: { 'Authorization': `Bearer ${accessToken}` } }),
+                axios.get(`${API_BASE_ROOT}/api/workspaces/${workspaceId}/groups`, { headers: { 'Authorization': `Bearer ${accessToken}` } })
             ]);
 
-            // --- XỬ LÝ KẾT QUẢ MEMBERS ---
+            // --- XỬ LÝ NHÂN VIÊN (STAFF) ---
             if (membersRes.status === 'fulfilled') {
                 const rawMembers = membersRes.value.data.data || membersRes.value.data || [];
-                
-                console.log("🔍 DATA GỐC TỪ SERVER:", rawMembers); 
-
-               
                 const mappedStaff = rawMembers.map(item => {
-                    const userInfo = item.User || item.user || item; 
-
+                    const u = item.User || item.user || item; 
                     return {
+                        id: u.user_id || u.id || u._id,
+                        name: u.full_name || u.name || u.email || "No Name",
+                        email: u.email || "N/A",
+                        role: item.role || u.role || 'Member',
+                        avatar: u.avatar_url || '/images/avatar.jpg',
+                        phone: u.phone_number || u.phone || 'N/A'
+                    };
+                });
+                setStaffList(mappedStaff);
+            }
+
+            // --- XỬ LÝ NHÓM (GROUPS) VÀ LẤY CHI TIẾT THÀNH VIÊN ---
+            if (groupsRes.status === 'fulfilled') {
+                const rawGroups = groupsRes.value.data.data || groupsRes.value.data || [];
+                
+                const detailPromises = rawGroups.map(async (group) => {
+                    const groupId = group.group_id || group.id;
                     
-                        id: userInfo.user_id || userInfo.id || userInfo._id,
+                    try {
+                        const url = `${API_GROUP_URL}/${groupId}/member`;
+                        const detailRes = await axios.get(url, {
+                            params: { _t: new Date().getTime() }, 
+                            headers: { 'Authorization': `Bearer ${accessToken}` }
+                        });
                         
                        
-                        name: userInfo.full_name || userInfo.name || userInfo.username || "No Name",
-                        email: userInfo.email || "N/A",
+                        const rawData = detailRes.data;
+
                         
-                        role: item.role || userInfo.role || 'Member',
-                        
-                        avatar: userInfo.avatar_url || userInfo.avatar || '/images/avatar.jpg',
-                        phone: userInfo.phone_number || userInfo.phone || 'N/A',
-                        address: userInfo.address || 'N/A',
-                        
-                        // Các trường khác nếu có
-                        gender: userInfo.gender || 'N/A',
-                        birthday: userInfo.birthday ? new Date(userInfo.birthday).toLocaleDateString('vi-VN') : 'N/A'
+                        let membersData = [];
+                        if (Array.isArray(rawData)) {
+                            membersData = rawData;
+                        } else if (rawData.data && Array.isArray(rawData.data)) {
+                            membersData = rawData.data;
+                        } else if (rawData.users && Array.isArray(rawData.users)) {
+                            membersData = rawData.users;
+                        } else if (rawData.members && Array.isArray(rawData.members)) {
+                            membersData = rawData.members;
+                        }
+
+                        return {
+                            ...group,
+                            members: membersData, 
+                            id: groupId,
+                            group_id: groupId
+                        };
+                    } catch (err) {
+                        console.warn(`Lỗi lấy thành viên nhóm ${groupId}:`, err.message);
+                        return { ...group, members: [] }; 
+                    }
+                });
+
+                const enrichedGroups = await Promise.all(detailPromises);
+
+                // Map dữ liệu lần cuối để hiển thị UI
+                const finalGroups = enrichedGroups.map(g => {
+                    const rawMembers = Array.isArray(g.members) ? g.members : [];
+                    
+                    const cleanMembers = rawMembers.map(m => {
+                        // Xử lý dữ liệu User bất chấp cấu trúc lồng nhau
+                        const u = m.User || m.user || m;
+                        if (!u) return null;
+
+                        return {
+                            id: u.user_id || u.id || u._id,
+                            name: u.full_name || u.name || u.email || "Unknown",
+                            email: u.email || "",
+                            avatar: u.avatar_url || '/images/avatar.jpg'
+                        };
+                    }).filter(item => item !== null);
+
+                    return {
+                        id: g.group_id || g.id,
+                        group_id: g.group_id || g.id,
+                        name: g.group_name || g.name,
+                        description: g.description,
+                        members: cleanMembers
                     };
                 });
 
-                setStaffList(mappedStaff);
-                console.log("✅ Danh sách nhân viên sau khi Map:", mappedStaff);
-            }
-
-            // --- XỬ LÝ KẾT QUẢ GROUPS ---
-            if (groupsRes.status === 'fulfilled') {
-                const rawGroups = groupsRes.value.data.data || groupsRes.value.data || [];
-                // Map dữ liệu cho khớp UI
-                const mappedGroups = rawGroups.map(g => ({
-                    id: g.group_id || g.id || g._id,
-                    name: g.group_name || g.name,
-                    description: g.description,
-                    members: g.members || []
-                }));
-                setGroupList(mappedGroups);
-                console.log(" Đã tải danh sách nhóm:", mappedGroups);
-            } else {
-                console.error(" Lỗi tải Groups:", groupsRes.reason);
+                setGroups(finalGroups);
+                console.log("HOÀN TẤT TẢI DỮ LIỆU. Danh sách nhóm:", finalGroups);
             }
 
         } catch (error) {
-            console.error("Lỗi chung khi tải dữ liệu Workspace:", error);
+            console.error("Lỗi tải dữ liệu:", error);
         }
     }, []);
 
@@ -116,7 +144,7 @@ const StaffPage = () => {
 
 
    const handleDeleteGroup = async (groupId) => {
-        if (!window.confirm("⚠️ Bạn có chắc chắn muốn xóa nhóm này không? Các thành viên trong nhóm sẽ bị gỡ bỏ khỏi nhóm.")) {
+        if (!window.confirm(" Bạn có chắc chắn muốn xóa nhóm này không? Các thành viên trong nhóm sẽ bị gỡ bỏ khỏi nhóm.")) {
             return;
         }
 
@@ -130,7 +158,7 @@ const StaffPage = () => {
             alert("Đã xóa nhóm thành công!");
 
             
-            setGroupList(prevGroups => prevGroups.filter(g => (g.group_id || g.id) !== groupId));
+            setGroups(prevGroups => prevGroups.filter(g => (g.group_id || g.id) !== groupId));
 
         } catch (error) {
             console.error("Lỗi xóa nhóm:", error);
@@ -243,7 +271,7 @@ const StaffPage = () => {
                             ) : (
                                 <>
                                     <GroupList
-                                        groups={groupList}
+                                        groups={groups}
                                         selectedStaffId={selectedStaff?.id}
                                         onSelectStaff={setSelectedStaff}
                                         onDeleteStaff={handleDeleteStaff}
@@ -294,6 +322,7 @@ const StaffPage = () => {
                     onClose={() => setIsAddMemberModalOpen(false)}
                     groupId={targetGroupId} 
                     existingStaffList={staffList}
+                    onAddSuccess={fetchWorkspaceData}
                 />
             )}
         </div>
