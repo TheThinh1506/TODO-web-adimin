@@ -36,23 +36,51 @@ const JobsPage = () => {
                 axios.get(`${API_BASE_ROOT}/api/workspaces/${workspaceId}/groups`, { headers: { 'Authorization': `Bearer ${accessToken}` } })
             ]);
 
-            // A. Xử lý Projects
+            // --- A. XỬ LÝ PROJECTS (ĐÃ THÊM LOGIC RANDOM DATE) ---
             if (projectsRes.status === 'fulfilled') {
                 const rawData = projectsRes.value.data.projects || projectsRes.value.data.data || [];
-                const mappedJobs = rawData.map((item, index) => ({
-                    id: item.project_id || item._id || item.id, 
-                    no: index + 1,
-                    task: item.name || item.title || 'No Name', 
-                    department: item.department || 'General',
-                    undertake: item.undertake || 'Me',
-                    deadline: item.end_date ? new Date(item.end_date).toLocaleDateString('vi-VN') : '--/--',
-                    status: item.status || 'In Progress',
-                    feedback: 'View'
-                }));
+                
+                const mappedJobs = rawData.map((item, index) => {
+                    // 1. Xác định ngày bắt đầu (Ưu tiên start_date, nếu ko có lấy created_at, nếu ko có lấy hôm nay)
+                    const startDateVal = item.start_date || item.created_at || new Date().toISOString();
+                    
+                    // 2. Xử lý Due Date (Deadline)
+                    let finalDueDate = item.due_date || item.end_date;
+
+                    // 🔥 LOGIC RANDOM DEADLINE NẾU NULL 🔥
+                    if (!finalDueDate) {
+                        // Tạo ngày ngẫu nhiên: Start Date + (từ 3 đến 30 ngày)
+                        const startObj = new Date(startDateVal);
+                        const randomDaysToAdd = Math.floor(Math.random() * 28) + 3; // Random từ 3 -> 30
+                        
+                        const randomDateObj = new Date(startObj);
+                        randomDateObj.setDate(startObj.getDate() + randomDaysToAdd);
+                        
+                        finalDueDate = randomDateObj.toISOString();
+                    }
+
+                    // 3. Xử lý tên người được gán (Undertake)
+                    const undertakeValue = item.undertake || item.assignee_name || 'Me';
+
+                    return {
+                        id: item.project_id || item._id || item.id, 
+                        no: index + 1,
+                        task: item.name || item.title || 'No Name', 
+                        department: item.department || 'General',
+                        undertake: undertakeValue,
+                        
+                        // Hiển thị ngày đã xử lý (Thực tế hoặc Random)
+                        deadline: new Date(finalDueDate).toLocaleDateString('vi-VN'),
+                        
+                        status: item.status || 'In Progress',
+                        feedback: 'View'
+                    };
+                });
+                
                 setJobs(mappedJobs);
             }
 
-            // B. Xử lý Staff List (giữ nguyên logic map)
+            // B. Xử lý Staff List (giữ nguyên)
             if (usersRes.status === 'fulfilled') {
                 const rawUsers = usersRes.value.data.data || usersRes.value.data || [];
                 const mappedUsers = rawUsers.filter(item => item).map(item => {
@@ -64,7 +92,7 @@ const JobsPage = () => {
                 setStaffList(mappedUsers);
             }
 
-            // C. Xử lý Group List (giữ nguyên logic map)
+            // C. Xử lý Group List (giữ nguyên)
             if (groupsRes.status === 'fulfilled') {
                 const rawGroups = groupsRes.value.data.data || groupsRes.value.data || [];
                 const mappedGroups = rawGroups.map(g => ({
@@ -92,32 +120,30 @@ const JobsPage = () => {
         try {
             const accessToken = localStorage.getItem('accessToken');
             const workspaceId = localStorage.getItem('currentWorkspaceId');
-        
+            
             let currentUserId = null;
             const storedUser = localStorage.getItem('user');
 
             if (storedUser) {
                 try {
                     const parsed = JSON.parse(storedUser);
-                    // Dùng toán tử || để lấy ID từ bất kỳ key nào
-                    currentUserId = parsed.user_id || parsed.id || parsed._id;
+                    currentUserId = parsed.user_id || parsed.id || parsed._id; 
                 } catch (e) {
                     console.error("Lỗi: JSON parse user info thất bại.", e);
                 }
             }
             
             if (!accessToken || !currentUserId || !workspaceId) {
-                alert("Lỗi: Thiếu thông tin người dùng hoặc Workspace. Vui lòng tải lại trang!");
+                alert("Lỗi: Thiếu thông tin User/Workspace. Vui lòng tải lại trang!");
                 return;
             }
 
-            // --- BƯỚC A: CHUẨN BỊ DATA TẠO PROJECT ---
+            // --- BƯỚC A: TẠO PROJECT ---
             const formData = new FormData();
             formData.append('name', jobData.title); 
             formData.append('description', jobData.description || "Project description");
-            formData.append('status', 'In Progress');
+            formData.append('status', 'In Progress'); 
             
-            // Map dữ liệu mới
             formData.append('undertake', jobData.undertake); 
             const sDate = jobData.startDate ? new Date(jobData.startDate) : new Date();
             let eDate = jobData.dueDate ? new Date(jobData.dueDate) : new Date(sDate.getTime() + 7*86400000);
@@ -125,8 +151,6 @@ const JobsPage = () => {
             formData.append('end_date', eDate.toISOString());         
             formData.append('priority', jobData.priority || 'Medium'); 
             formData.append('type', jobData.type || 'General');
-            
-            // ID và Assignment
             formData.append('owner_id', currentUserId); 
             formData.append('workspace_id', workspaceId); 
             
@@ -142,29 +166,36 @@ const JobsPage = () => {
             const newProjectData = createRes.data.project || createRes.data.data || createRes.data || {};
             const newProjectId = newProjectData.project_id || newProjectData.id || newProjectData._id;
 
-            if (!newProjectId) throw new Error("Lỗi: Không lấy được ID dự án mới! (BE không trả ID)");
+            if (!newProjectId) throw new Error("Không lấy được ID dự án mới!");
 
-            // --- GỌI API GÁN (ASSIGN) ---
+            // ---GỌI API GÁN (ASSIGN) ---
             if (jobData.assignee) {
                 const { id, type } = jobData.assignee;
                 let assignUrl = '';
                 let assignBody = {};
 
-                console.log(`BƯỚC 2: Gán Project cho ${type} ID: ${id}`);
+               
+                const normalizedType = type ? type.toLowerCase().trim() : '';
+                const assignProjectId = Number(newProjectId);
 
-                if (type === 'group') {
+                console.log(`BƯỚC 2: Gán Project cho [${normalizedType}] ID: ${id}`);
+
+                if (normalizedType === 'Group') {
                     assignUrl = `${API_BASE_ROOT}/api/projects/assign-group`;
-                    assignBody = { project_id: newProjectId, group_id: id };
-                } else if (type === 'user') {
+                   
+                    assignBody = { 
+                        project_id: assignProjectId, 
+                        group_id: Number(id),
+                        user_id: Number(currentUserId) 
+                    }; 
+                } else if (normalizedType === 'user' || normalizedType === 'Member') {
                     assignUrl = `${API_BASE_ROOT}/api/projects/assign-user`;
-                    assignBody = { project_id: newProjectId, user_id: id };
+                    assignBody = { project_id: assignProjectId, user_id: id };
                 }
 
                 if (assignUrl) {
-                    await axios.post(assignUrl, assignBody, {
-                        headers: { 'Authorization': `Bearer ${accessToken}` }
-                    });
-                    console.log(" Đã gán thành công!");
+                    await axios.post(assignUrl, assignBody, { headers: { 'Authorization': `Bearer ${accessToken}` } });
+                    console.log("Đã gán thành công!");
                 }
             }
 
@@ -173,13 +204,33 @@ const JobsPage = () => {
             fetchAllData(); 
 
         } catch (error) {
-            console.error("Lỗi:", error);
+            console.error("Lỗi tạo dự án:", error);
             const msg = error.response?.data?.message || error.message;
             alert(`Lỗi Server: ${msg}`);
         }
     };
 
-    // --- LOGIC UI KHÁC (Giữ nguyên) ---
+    // --- 3. HÀM XÓA PROJECT ---
+    const handleDeleteProject = async (projectId) => {
+        if (!window.confirm("Bạn có chắc chắn muốn xóa dự án này không?")) return;
+
+        try {
+            const accessToken = localStorage.getItem('accessToken');
+            await axios.delete(`${API_BASE_ROOT}/api/projects/${projectId}`, {
+                headers: { 'Authorization': `Bearer ${accessToken}` }
+            });
+
+            alert("Đã xóa dự án thành công!");
+            setJobs(prevJobs => prevJobs.filter(job => job.id !== projectId));
+
+        } catch (error) {
+            console.error("Lỗi xóa dự án:", error);
+            const msg = error.response?.data?.message || "Lỗi Server.";
+            alert(`Không thể xóa: ${msg}`);
+        }
+    };
+    
+    // --- LOGIC UI KHÁC ---
     const filteredJobs = jobs.filter(job => {
         const matchesFilter = (filter === 'All' || job.department === filter);
         const matchesSearch = job.task.toLowerCase().includes(searchTerm.toLowerCase());
