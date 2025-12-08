@@ -9,10 +9,7 @@ const StaffDetails = ({ staff }) => {
         return <div className="details-wrapper">Vui lòng chọn một nhân viên.</div>;
     }
     
-    // **ĐIỂM KẾT NỐI API QUAN TRỌNG:**
-    // Dữ liệu 'staff' này có thể là dữ liệu rút gọn từ danh sách.
-    // Bạn có thể cần gọi API (GET /api/user-info/{staff.id}) để lấy
-    // thông tin đầy đủ nhất khi component này được tải.
+
 
     return (
         <div className="details-wrapper">

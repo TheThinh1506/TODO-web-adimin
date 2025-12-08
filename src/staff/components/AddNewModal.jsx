@@ -16,7 +16,7 @@ const AddNewModal = ({ onClose, onInviteSuccess }) => {
 
     useEffect(() => {
         if (currentWorkspaceId) {
-            setInviteCode(`WS-${currentWorkspaceId}-${Math.floor(Math.random() * 10000)}`);
+            setInviteCode(`8507b4`);
         } else {
             setInviteCode("NO-WORKSPACE-ID");
         }
@@ -75,7 +75,7 @@ const AddNewModal = ({ onClose, onInviteSuccess }) => {
             const promises = invitedList.map(member => {
                 return axios.post(
                     `${API_BASE_ROOT}/api/workspaces/${currentWorkspaceId}/add`,
-                    { email: member.email, role: 'Member' }, // Mặc định role Member
+                    { email: member.email, role: 'Member' }, 
                     { headers: { 'Authorization': `Bearer ${accessToken}` } }
                 );
             });
@@ -88,7 +88,7 @@ const AddNewModal = ({ onClose, onInviteSuccess }) => {
 
         } catch (error) {
             console.error("Lỗi thêm nhân viên:", error);
-            const msg = error.response?.data?.message || "Lỗi Server.";
+         
             alert(`Lỗi: ${msg}`);
         } finally {
             setIsLoading(false);

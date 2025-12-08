@@ -166,8 +166,44 @@ const AddJobModal = ({ onClose, onSave, staffList, groupList }) => {
                         
                         {/* Files preview and input logic */}
                         {files.length > 0 && (
-                            <div className="selected-files">
-                                {/* Map file chips */}
+                            <div className="selected-files" style={{ marginTop: '10px' }}>
+                                {/* 🔥 PHẦN CODE ĐÃ THÊM: HIỂN THỊ DANH SÁCH FILE 🔥 */}
+                                {files.map((file, index) => (
+                                    <div key={index} style={{ 
+                                        display: 'flex', 
+                                        alignItems: 'center', 
+                                        justifyContent: 'space-between', 
+                                        background: '#f5f5f5', 
+                                        padding: '6px 10px', 
+                                        borderRadius: '4px', 
+                                        marginBottom: '5px',
+                                        fontSize: '13px',
+                                        border: '1px solid #eee'
+                                    }}>
+                                        <span style={{ 
+                                            overflow: 'hidden', 
+                                            textOverflow: 'ellipsis', 
+                                            whiteSpace: 'nowrap',
+                                            maxWidth: '90%'
+                                        }}>
+                                            📎 {file.name}
+                                        </span>
+                                        <button 
+                                            type="button"
+                                            onClick={() => handleRemoveFile(index)}
+                                            style={{ 
+                                                border: 'none', 
+                                                background: 'transparent', 
+                                                cursor: 'pointer', 
+                                                color: '#ff4d4f', 
+                                                fontWeight: 'bold',
+                                                marginLeft: '10px'
+                                            }}
+                                        >
+                                            ✕
+                                        </button>
+                                    </div>
+                                ))}
                             </div>
                         )}
                         <input type="file" multiple ref={fileInputRef} style={{display: 'none'}} onChange={handleFileChange} />
